@@ -5,16 +5,131 @@
         MinWidth="275" MinHeight="475"
         Title="BrimWorld Лаунчер"
         Icon="/Assets/Icon-with-bg.png"
+        SystemDecorations="None"
         CanResize="True"
-        Resized="OnResized"
         WindowStartupLocation="CenterScreen"
-        >
+        PointerPressed="OnPointerPressed">
+	<Window.Background>
+		<ImageBrush Source="/Assets/Background.png"/>
+	</Window.Background>
 	<Viewbox Stretch="Uniform">
-		<StackPanel Width="1100" Height="1900">
-            <Image Source="/Assets/Background.png"></Image>
-			<!--<TextBlock FontFamily="Leto.otf#Leto Text Sans Defect"
-								 FontSize="100"
-								 Text="Hello"></TextBlock>-->
-		</StackPanel>
+		<Canvas Width="2224" Height="3840">
+			<Button Width="123" Height="132"
+							Canvas.Left="1779"
+							Canvas.Top="34"
+			        Background="Transparent">
+				<Image Source="/Assets/Setting button.png">
+					<Image.Transitions>
+						<Transitions>
+							<DoubleTransition Property="Width" Duration="0:0:0.1" />
+							<DoubleTransition Property="Height" Duration="0:0:0.1" />
+						</Transitions>
+					</Image.Transitions>
+					<Image.Styles>
+						<Style Selector="Button > Image">
+							<Setter Property="Width" Value="112" />
+							<Setter Property="Height" Value="120" />
+						</Style>
+						<Style Selector="Button:pointerover > Image">
+							<Setter Property="Width" Value="117" />
+							<Setter Property="Height" Value="126" />
+						</Style>
+						<Style Selector="Button:pressed > Image">
+							<Setter Property="Width" Value="106" />
+							<Setter Property="Height" Value="114" />
+						</Style>
+					</Image.Styles>
+				</Image>
+				<Button.Styles>
+					<Style Selector="Button">
+						<Setter Property="Background" Value="Transparent" />
+					</Style>
+					<Style Selector="Button:pointerover /template/ ContentPresenter">
+						<Setter Property="Background" Value="Transparent" />
+					</Style>
+					<Style Selector="Button:pressed /template/ ContentPresenter">
+						<Setter Property="Background" Value="Transparent" />
+					</Style>
+				</Button.Styles>
+			</Button>
+			<Button Width="129" Height="129"
+			        Canvas.Left="1919"
+			        Canvas.Top="34"
+			        Background="Transparent"
+			        Click="MinimizeApplication">
+				<Image Source="/Assets/Minimize button.png">
+					<Image.Transitions>
+						<Transitions>
+							<DoubleTransition Property="Width" Duration="0:0:0.1" />
+							<DoubleTransition Property="Height" Duration="0:0:0.1" />
+						</Transitions>
+					</Image.Transitions>
+					<Image.Styles>
+						<Style Selector="Button > Image">
+							<Setter Property="Width" Value="117" />
+							<Setter Property="Height" Value="117" />
+						</Style>
+						<Style Selector="Button:pointerover > Image">
+							<Setter Property="Width" Value="123" />
+							<Setter Property="Height" Value="123" />
+						</Style>
+						<Style Selector="Button:pressed > Image">
+							<Setter Property="Width" Value="111" />
+							<Setter Property="Height" Value="111" />
+						</Style>
+					</Image.Styles>
+				</Image>
+				<Button.Styles>
+					<Style Selector="Button">
+						<Setter Property="Background" Value="Transparent" />
+					</Style>
+					<Style Selector="Button:pointerover /template/ ContentPresenter">
+						<Setter Property="Background" Value="Transparent" />
+					</Style>
+					<Style Selector="Button:pressed /template/ ContentPresenter">
+						<Setter Property="Background" Value="Transparent" />
+					</Style>
+				</Button.Styles>
+			</Button>
+			<Button Width="131" Height="131"
+			        Canvas.Left="2061"
+			        Canvas.Top="33"
+			        Background="Transparent"
+			        Click="ExitApplication">
+				<Image Source="/Assets/Close button.png">
+					<Image.Transitions>
+						<Transitions>
+							<DoubleTransition Property="Width" Duration="0:0:0.1" />
+							<DoubleTransition Property="Height" Duration="0:0:0.1" />
+						</Transitions>
+					</Image.Transitions>
+					<Image.Styles>
+						<Style Selector="Button > Image">
+							<Setter Property="Width" Value="119" />
+							<Setter Property="Height" Value="119" />
+						</Style>
+						<Style Selector="Button:pointerover > Image">
+							<Setter Property="Width" Value="125" />
+							<Setter Property="Height" Value="125" />
+						</Style>
+						<Style Selector="Button:pressed > Image">
+							<Setter Property="Width" Value="113" />
+							<Setter Property="Height" Value="113" />
+						</Style>
+					</Image.Styles>
+				</Image>
+				<Button.Styles>
+					<Style Selector="Button">
+						<Setter Property="Background" Value="Transparent" />
+					</Style>
+					<Style Selector="Button:pointerover /template/ ContentPresenter">
+						<Setter Property="Background" Value="Transparent" />
+					</Style>
+					<Style Selector="Button:pressed /template/ ContentPresenter">
+						<Setter Property="Background" Value="Transparent" />
+					</Style>
+				</Button.Styles>
+			</Button>
+		</Canvas>
 	</Viewbox>
 </Window>
