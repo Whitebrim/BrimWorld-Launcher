@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -17,6 +18,7 @@ namespace Launcher
         {
             InitializeComponent();
             InitialResize();
+            InitButtons();
             //_previousWidth = Width;
             //_previousHeight = Height;
         }
@@ -27,6 +29,11 @@ namespace Launcher
             int newHeight = (int)(Math.Round(screen.Height * windowSize));
             Height = newHeight;
             Width = newHeight * 11.0 / 19.0;
+        }
+
+        private void InitButtons()
+        {
+            
         }
 
         //private void OnResized(object? sender, WindowResizedEventArgs e)
@@ -68,6 +75,31 @@ namespace Launcher
             {
                 lifetime.Shutdown();
             }
+        }
+
+        private void OnSettingsClicked(object? sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void OnVKClicked(object? sender, RoutedEventArgs e)
+        {
+            new Process {StartInfo = new ProcessStartInfo("https://vk.com/brimworld") {UseShellExecute = true}}.Start();
+        }
+
+        private void OnDiscordClicked(object? sender, RoutedEventArgs e)
+        {
+            new Process {StartInfo = new ProcessStartInfo("https://discord.gg/eD7dtgj94w") {UseShellExecute = true}}.Start();
+        }
+
+        private void OnFirstServerClicked(object? sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void OnSecondServerClicked(object? sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }
