@@ -1,14 +1,19 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:progRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
+        xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
         x:Class="Launcher.MainWindow"
         Width="495" Height="855"
         MinWidth="275" MinHeight="475"
         Title="BrimWorld Лаунчер"
         Icon="/Assets/Icon-with-bg.png"
         SystemDecorations="None"
-        CanResize="True"
+        CanResize="False"
         WindowStartupLocation="CenterScreen"
-        PointerPressed="OnPointerPressed">
+        Resized="OnResized"
+        Loaded="OnLoaded"
+        PointerPressed="OnPointerPressed"
+        ScalingChanged="OnScalingChanged">
   <Window.Background>
     <ImageBrush Source="/Assets/Background.png"/>
   </Window.Background>
@@ -16,7 +21,7 @@
   <Viewbox Stretch="Uniform">
     <Canvas Width="2224" Height="3840">
       <Button Classes="TitlebarButton" Name="settingsButton"
-              Click="OnSettingsClicked"
+              Click="OnSettingsClicked" IsEnabled="False"
               Canvas.Left="1776">
         <Image Source="/Assets/Setting button.png"/>
       </Button>
@@ -36,27 +41,38 @@
       <Button Classes="SocialButton" Name="vkButton"
               Click="OnVKClicked"
               Canvas.Left="80">
-        <Image Source="/Assets/VK button.png"></Image>
+        <Image Source="/Assets/VK button.png"/>
       </Button>
 
       <Button Classes="SocialButton" Name="discordButton"
               Click="OnDiscordClicked"
               Canvas.Left="1693">
-        <Image Source="/Assets/Discord button.png"></Image>
+        <Image Source="/Assets/Discord button.png"/>
       </Button>
 
       <Button Classes="ServerButton" Name="firstServerButton"
-              Click="OnFirstServerClicked"
-              Canvas.Top="1870">
-        <Image Source="/Assets/Vanila button.png"></Image>
+              Canvas.Top="1870" IsEnabled="true">
+        <Image Source="/Assets/Placeholder button.png"/>
       </Button>
 
       <Button Classes="ServerButton" Name="secondServerButton"
-              Click="OnSecondServerClicked"
-              Canvas.Top="2780"
-              IsEnabled="False">
-        <Image Source="/Assets/ComingSoon button.png"></Image>
+              Canvas.Top="2780" IsEnabled="False">
+        <Image Source="/Assets/Placeholder button.png"/>
       </Button>
+
+      <progRing:ProgressRing  Name="firstServerLoadingBar"
+                              Width="256"
+                              Height="256"
+                              Canvas.Top="2240" Canvas.Left="980"
+                              IsActive="True"
+                              Foreground="White"/>
+
+      <progRing:ProgressRing Name="secondServerLoadingBar"
+                             Width="256"
+                             Height="256"
+                             Canvas.Top="3160" Canvas.Left="980"
+                             IsActive="True"
+                             Foreground="White"/>
     </Canvas>
   </Viewbox>
 
@@ -73,6 +89,10 @@
     </Style>
 
     <Style Selector="Button.TitlebarButton:pressed /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.TitlebarButton:disabled /template/ ContentPresenter">
       <Setter Property="Background" Value="Transparent" />
     </Style>
 
@@ -110,6 +130,10 @@
     </Style>
 
     <Style Selector="Button.SocialButton:pressed /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.SocialButton:disabled /template/ ContentPresenter">
       <Setter Property="Background" Value="Transparent" />
     </Style>
 

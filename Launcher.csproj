@@ -17,7 +17,14 @@
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.999-cibuild0036707-beta" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.999-cibuild0036707-beta" />
+    <PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.10.0-preview20230601001" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0-preview.5.23280.8" />
 
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
+
+
+	<ItemGroup>
+	  <Folder Include="Interfaces\" />
+	</ItemGroup>
 </Project>

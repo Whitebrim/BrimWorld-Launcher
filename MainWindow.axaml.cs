@@ -1,62 +1,76 @@
-using System;
-using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Launcher.Services;
+using System;
+using System.Diagnostics;
+using Avalonia.Media.Imaging;
 using Debug = System.Diagnostics.Debug;
 
 namespace Launcher
 {
     public partial class MainWindow : Window
     {
-        private const float windowSize = 0.8f;
-        //private double _previousWidth;
-        //private double _previousHeight;
+        private const float WindowScale = 0.8f;
+        private ContentManager _contentManager;
+
+
         public MainWindow()
         {
             InitializeComponent();
+
             InitialResize();
-            InitButtons();
-            //_previousWidth = Width;
-            //_previousHeight = Height;
+        }
+
+        private async void OnLoaded(object? sender, RoutedEventArgs e)
+        {
+            _contentManager = new ContentManager();
+            bool success = await _contentManager.Initialize();
+            if (success)
+            {
+                InitButtons();
+            }
+            else
+            {
+                Debug.WriteLine("OnLoaded can't access internet, show window and close");
+            }
+        }
+
+        private async void InitButtons()
+        {
+            firstServerButton.Click += (s, e) => OnServerClicked(s, e, 0);
+            secondServerButton.Click += (s, e) => OnServerClicked(s, e, 1);
+            firstServerButton.IsEnabled = _contentManager.IsServerEnabled(0);
+            secondServerButton.IsEnabled = _contentManager.IsServerEnabled(1);
+            settingsButton.IsEnabled = true;
+            firstServerLoadingBar.IsActive = false;
+            secondServerLoadingBar.IsActive = false;
+            (firstServerButton.Content as Image).Source = await _contentManager.GetBanner(0);
+            (secondServerButton.Content as Image).Source = await _contentManager.GetBanner(1);
         }
 
         private void InitialResize()
         {
-            var screen = Screens.ScreenFromWindow(this).WorkingArea;
-            int newHeight = (int)(Math.Round(screen.Height * windowSize));
+            PixelRect screen = Screens.ScreenFromWindow(this)!.WorkingArea;
+            var newHeight = (int)(Math.Round(screen.Height * (WindowScale / DesktopScaling)));
             Height = newHeight;
-            Width = newHeight * 11.0 / 19.0;
+            Width = (int)(Math.Round(newHeight * 11.0 / 19.0));
         }
 
-        private void InitButtons()
+        private void OnResized(object? sender, WindowResizedEventArgs e)
         {
-            
+            if (e.Reason != WindowResizeReason.Application)
+            {
+                InitialResize();
+            }
         }
 
-        //private void OnResized(object? sender, WindowResizedEventArgs e)
-        //{
-        //    if (e.Reason == WindowResizeReason.User)
-        //    {
-        //        var screen = Screens.ScreenFromWindow(this).WorkingArea;
-        //        var titlebarHeight = FrameSize.HasValue ? FrameSize.Value.Height - ClientSize.Height : 0;
-        //        if ((int)_previousHeight != (int)e.ClientSize.Height) // Скейлим до 19:11 используя как базу высоту
-        //        {
-        //            Height = Math.Min(screen.Height - titlebarHeight, e.ClientSize.Height);
-        //            Debug.WriteLine(screen.Height - titlebarHeight + " " + e.ClientSize.Height);
-        //            Width = Height * 11 / 19;
-        //        }
-        //        else // Скейлим до 19:11 используя как базу ширину
-        //        {
-        //            Height = Math.Min(screen.Height - titlebarHeight, e.ClientSize.Width * 19 / 11);
-        //            Width = Height * 11 / 19;
-        //        }
-        //    }
-        //    _previousWidth = Width;
-        //    _previousHeight = Height;
-        //}
+        private void OnScalingChanged(object? sender, EventArgs e)
+        {
+            InitialResize();
+        }
 
         private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
         {
@@ -70,7 +84,7 @@ namespace Launcher
 
         private void ExitApplication(object? sender, RoutedEventArgs e)
         {
-            var app = Application.Current;
+            Application? app = Application.Current;
             if (app?.ApplicationLifetime is ClassicDesktopStyleApplicationLifetime lifetime)
             {
                 lifetime.Shutdown();
@@ -79,27 +93,33 @@ namespace Launcher
 
         private void OnSettingsClicked(object? sender, RoutedEventArgs e)
         {
-            
+            new Process
+            {
+                StartInfo = new ProcessStartInfo("file://" + ContentManager.GetLocalDataPath("BrimWorld"))
+                { UseShellExecute = true }
+            }.Start();
         }
 
         private void OnVKClicked(object? sender, RoutedEventArgs e)
         {
-            new Process {StartInfo = new ProcessStartInfo("https://vk.com/brimworld") {UseShellExecute = true}}.Start();
+            new Process { StartInfo = new ProcessStartInfo("https://vk.com/brimworld") { UseShellExecute = true } }
+                .Start();
         }
 
         private void OnDiscordClicked(object? sender, RoutedEventArgs e)
         {
-            new Process {StartInfo = new ProcessStartInfo("https://discord.gg/eD7dtgj94w") {UseShellExecute = true}}.Start();
+            new Process { StartInfo = new ProcessStartInfo("discord:///invite/eD7dtgj94w") { UseShellExecute = true } }
+                .Start();
         }
 
-        private void OnFirstServerClicked(object? sender, RoutedEventArgs e)
+        private async void OnServerClicked(object? sender, RoutedEventArgs e, int serverId)
         {
-            
-        }
+            //IArchiveExtractor archiveExtractor = new ZipExtractor(_fileManager);
+            //var httpZipExtractor = new HttpZipExtractor(archiveExtractor);
 
-        private void OnSecondServerClicked(object? sender, RoutedEventArgs e)
-        {
-            
+            //string javaDist = _manifest.Servers[serverId].JavaDistribution;
+            //string url = _manifest.JavaDistributions[javaDist].DownloadUrls[PlatformDetector.GetSystemInfo()];
+            //await httpZipExtractor.ExtractZip(javaDist, url);
         }
     }
 }
