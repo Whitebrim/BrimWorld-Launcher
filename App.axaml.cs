@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Launcher.Services;
 
 namespace Launcher
 {
@@ -15,7 +16,7 @@ namespace Launcher
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow();
+                desktop.MainWindow = new MainWindow(new ContentManager());
             }
 
             base.OnFrameworkInitializationCompleted();
