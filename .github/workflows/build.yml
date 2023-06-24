@@ -15,7 +15,7 @@ jobs:
           - name: windows-x86-64
             os: windows-latest
             publish-flags: >-
-              /p:PublishProfile=Win64
+              /p:PublishProfile=Win-x64
             artifacts: |-
               .\bin\Release\net7.0\publish\win-x64\*.exe
           #- os: macos-latest
