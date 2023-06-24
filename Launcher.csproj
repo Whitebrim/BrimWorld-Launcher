@@ -11,8 +11,10 @@
     <PublishSingleFile>true</PublishSingleFile>
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishTrimmed>true</PublishTrimmed>
+    <!-- Nuget reproducible builds -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
   </PropertyGroup>
-
 
 	<ItemGroup>
     <PackageReference Include="Avalonia" Version="11.0.999-cibuild0036924-beta" />
@@ -26,7 +28,6 @@
 
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
-
 
 	<ItemGroup>
 	  <Folder Include="Interfaces\" />
