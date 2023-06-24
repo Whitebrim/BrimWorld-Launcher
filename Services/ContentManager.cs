@@ -20,18 +20,21 @@ public class ContentManager
 
     //public event EventHandler OnManifestLoaded;
 
-    private FileManager _fileManager;
-    private ContentDownloader _contentDownloader;
-    private ArchiveExtractor _archiveExtractor;
+    private readonly FileManager _fileManager;
+    private readonly ContentDownloader _contentDownloader;
+    private readonly ArchiveExtractor _archiveExtractor;
 
-    private Manifest _manifest;
+    private Manifest _manifest = null!;
 
-    public async Task<bool> Initialize()
+    public ContentManager()
     {
         _fileManager = new FileManager(GetLocalDataPath("BrimWorld"));
         _contentDownloader = new ContentDownloader(_fileManager);
         _archiveExtractor = new ArchiveExtractor(_fileManager);
+    }
 
+    public async Task<bool> Initialize()
+    {
         Manifest? manifest = await _contentDownloader.LoadManifest();
 
         Manifest? newManifest = await _contentDownloader.DownloadManifest();
@@ -83,21 +86,21 @@ public class ContentManager
 
         if (response.Headers.TryGetValues("etag", out var etagValues))
         {
-            etag = etagValues.FirstOrDefault().Replace("\"", "").ToLowerInvariant();
+            etag = etagValues.FirstOrDefault()?.Replace("\"", "").ToLowerInvariant();
         }
 
-        var md5_sum = "none";
+        var md5Sum = "none";
 
         if (_fileManager.FileExist(localFilePath))
         {
-            using MD5 md5 = MD5.Create();
+            using var md5 = MD5.Create();
             await using Stream md5Stream = _fileManager.ReadFile(localFilePath);
-            var hash = md5.ComputeHash(md5Stream);
+            byte[] hash = await md5.ComputeHashAsync(md5Stream);
 
-            md5_sum = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+            md5Sum = BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
         }
 
-        if (etag == md5_sum) return;
+        if (etag == md5Sum) return;
 
         //Debug.WriteLine("etag != md5_sum:");
         //Debug.WriteLine(etag);
@@ -119,8 +122,7 @@ public class ContentManager
 
     public bool IsServerEnabled(int serverIndex)
     {
-        if (serverIndex >= _manifest.Servers.Count) return false;
-        return _manifest.Servers[serverIndex].Enabled;
+        return serverIndex < _manifest.Servers.Count && _manifest.Servers[serverIndex].Enabled;
     }
 
     public static string GetLocalDataPath(params string[] relativePath)

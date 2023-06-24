@@ -5,5 +5,5 @@ namespace Launcher.Interfaces;
 
 public interface IArchiveExtractor
 {
-    public async Task ExtractArchive(string extractPath, Stream contentStream){}
+    Task ExtractArchive(string extractPath, Stream contentStream);
 }

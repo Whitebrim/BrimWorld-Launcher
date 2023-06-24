@@ -14,11 +14,12 @@ namespace Launcher
     public partial class MainWindow : Window
     {
         private const float WindowScale = 0.8f;
-        private ContentManager _contentManager;
+        private readonly ContentManager _contentManager;
 
 
-        public MainWindow()
+        public MainWindow(ContentManager contentManager)
         {
+            _contentManager = contentManager;
             InitializeComponent();
 
             InitialResize();
@@ -26,7 +27,6 @@ namespace Launcher
 
         private async void OnLoaded(object? sender, RoutedEventArgs e)
         {
-            _contentManager = new ContentManager();
             bool success = await _contentManager.Initialize();
             if (success)
             {
@@ -47,8 +47,8 @@ namespace Launcher
             settingsButton.IsEnabled = true;
             firstServerLoadingBar.IsActive = false;
             secondServerLoadingBar.IsActive = false;
-            (firstServerButton.Content as Image).Source = await _contentManager.GetBanner(0);
-            (secondServerButton.Content as Image).Source = await _contentManager.GetBanner(1);
+            (firstServerButton.Content as Image)!.Source = await _contentManager.GetBanner(0);
+            (secondServerButton.Content as Image)!.Source = await _contentManager.GetBanner(1);
         }
 
         private void InitialResize()
@@ -112,7 +112,7 @@ namespace Launcher
                 .Start();
         }
 
-        private async void OnServerClicked(object? sender, RoutedEventArgs e, int serverId)
+        private void OnServerClicked(object? sender, RoutedEventArgs e, int serverId)
         {
             //IArchiveExtractor archiveExtractor = new ZipExtractor(_fileManager);
             //var httpZipExtractor = new HttpZipExtractor(archiveExtractor);
