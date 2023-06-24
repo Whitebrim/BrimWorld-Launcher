@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System;
+#pragma warning disable SYSLIB0013
 
 namespace Launcher.Extensions;
 
@@ -18,7 +19,7 @@ public static class Url
         if (parts == null)
             throw new ArgumentNullException(nameof(parts));
 
-        string result = "";
+        var result = "";
         bool inQuery = false, inFragment = false;
 
         string CombineEnsureSingleSeparator(string a, string b, char separator)
