@@ -7,11 +7,13 @@ on:
 
 jobs:
   build:
+    name: Build ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
-          - os: windows-latest
+          - name: windows-x86-64
+            os: windows-latest
             publish-flags: >-
               /p:PublishProfile=Win64
             artifacts: |-
