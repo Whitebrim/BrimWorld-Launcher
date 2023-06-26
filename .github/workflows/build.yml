@@ -39,7 +39,7 @@ jobs:
         run: dotnet.exe restore --locked-mode
 
       - name: Prepare certificate
-        if: ${{ startsWith(matrix.name, "windows-") }}
+        if: ${{ startsWith(matrix.name, 'windows-') }}
         env:
           WINDOWS_PFX_FILE: ${{ secrets.WINDOWS_PFX_FILE }}
           WINDOWS_PFX_PASSWORD: ${{ secrets.WINDOWS_PFX_PASSWORD }}
