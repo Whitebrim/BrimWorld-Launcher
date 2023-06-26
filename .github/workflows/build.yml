@@ -16,6 +16,9 @@ jobs:
             os: windows-latest
             publish-flags: >-
               /p:PublishProfile=Win-x64
+              /p:GenerateAppxPackageOnBuild=true
+              /p:AppxPackageSigningEnabled=true
+              /p:PackageCertificateThumbprint="$WINDOWS_PFX_THUMBPRINT"
             artifacts: |-
               .\bin\Release\net7.0\publish\win-x64\*.exe
           #- os: macos-latest
@@ -35,7 +38,19 @@ jobs:
       - name: Restore dependencies
         run: dotnet.exe restore --locked-mode
 
+      - name: Prepare certificate
+        if: ${{ startsWith(matrix.name, "windows-") }}
+        env:
+          WINDOWS_PFX_FILE: ${{ secrets.WINDOWS_PFX_FILE }}
+          WINDOWS_PFX_PASSWORD: ${{ secrets.WINDOWS_PFX_PASSWORD }}
+        run: |
+          echo "$WINDOWS_PFX_FILE" >cert.pfx.asc
+          certutil -decode cert.pfx.asc cert.pfx
+          certutil -user -q -p "$WINDOWS_PFX_PASSWORD" -importpfx cert.pfx NoRoot
+
       - name: Build
+        env:
+          WINDOWS_PFX_THUMBPRINT: ${{ secrets.WINDOWS_PFX_THUMBPRINT }}
         run: dotnet publish --no-restore /p:Configuration=Release ${{ matrix.publish-flags }}
 
       #- name: Test
