@@ -16,11 +16,10 @@ jobs:
             os: windows-latest
             publish-flags: >-
               /p:PublishProfile=Win-x64
-              /p:GenerateAppxPackageOnBuild=true
-              /p:AppxPackageSigningEnabled=true
-              /p:PackageCertificateThumbprint="$WINDOWS_PFX_THUMBPRINT"
             artifacts: |-
               .\bin\Release\net7.0\publish\win-x64\*.exe
+            folder: |-
+              .\bin\Release\net7.0\publish\win-x64\
           #- os: macos-latest
           #- os: ubuntu-latest
     env:
@@ -54,7 +53,7 @@ jobs:
           cert-password: '${{ secrets.WINDOWS_PFX_PASSWORD }}'
           cert-sha1: '${{ secrets.WINDOWS_PFX_THUMBPRINT }}'
           cert-description: 'BrimWorld self-signed certificate'
-          folder: '.\bin\Release\net7.0\publish\win-x64\'
+          folder: ${{ matrix.folder }}
           recursive: false
 
       - name: Upload artifacts
