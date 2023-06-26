@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -13,7 +13,7 @@
   </PropertyGroup>
 
 	<ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.0.999-cibuild0036924-beta" />
+    <PackageReference Include="Avalonia" Version="11.0.999-cibuild0036967-beta" />
     <PackageReference Include="Avalonia.Desktop" Version="11.0.999-cibuild0036924-beta" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.999-cibuild0036924-beta" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.999-cibuild0036924-beta" />
