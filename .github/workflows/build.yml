@@ -38,16 +38,6 @@ jobs:
       - name: Restore dependencies
         run: dotnet.exe restore --locked-mode
 
-      - name: Prepare certificate
-        if: ${{ startsWith(matrix.name, 'windows-') }}
-        env:
-          WINDOWS_PFX_FILE: ${{ secrets.WINDOWS_PFX_FILE }}
-          WINDOWS_PFX_PASSWORD: ${{ secrets.WINDOWS_PFX_PASSWORD }}
-        run: |
-          echo "$WINDOWS_PFX_FILE" >cert.pfx.asc
-          certutil -decode cert.pfx.asc cert.pfx
-          certutil -user -q -p "$WINDOWS_PFX_PASSWORD" -importpfx cert.pfx NoRoot
-
       - name: Build
         env:
           WINDOWS_PFX_THUMBPRINT: ${{ secrets.WINDOWS_PFX_THUMBPRINT }}
@@ -56,6 +46,17 @@ jobs:
       #- name: Test
       #  run: dotnet test --no-build --verbosity normal
       
+      - name: Sign
+        if: ${{ startsWith(matrix.name, 'windows-') }}
+        uses: GabrielAcostaEngler/signtool-code-sign@main
+        with:
+          certificate: '${{ secrets.WINDOWS_PFX_FILE }}'
+          cert-password: '${{ secrets.WINDOWS_PFX_PASSWORD }}'
+          cert-sha1: '${{ secrets.WINDOWS_PFX_THUMBPRINT }}'
+          cert-description: 'BrimWorld self-signed certificate'
+          folder: '.\bin\Release\net7.0\publish\win-x64\'
+          recursive: false
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v3.1.2
         with:
