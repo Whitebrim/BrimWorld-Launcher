@@ -113,7 +113,7 @@ namespace Launcher
                 .Start();
         }
 
-        private async void OnServerClicked(object? sender, RoutedEventArgs e, int serverId)
+        private void OnServerClicked(object? sender, RoutedEventArgs e, int serverId)
         {
             if (_launchIsProcessing) return;
             _launchIsProcessing = true;
