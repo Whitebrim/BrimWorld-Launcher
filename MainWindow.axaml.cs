@@ -6,6 +6,7 @@ using Avalonia.Interactivity;
 using Launcher.Services;
 using System;
 using System.Diagnostics;
+using System.Net.Http;
 using Avalonia.Media.Imaging;
 using Debug = System.Diagnostics.Debug;
 
@@ -15,11 +16,11 @@ namespace Launcher
     {
         private const float WindowScale = 0.8f;
         private readonly ContentManager _contentManager;
+        private bool _launchIsProcessing = false;
 
-
-        public MainWindow(ContentManager contentManager)
+        public MainWindow()
         {
-            _contentManager = contentManager;
+            _contentManager = new ContentManager(new HttpClient());
             InitializeComponent();
 
             InitialResize();
@@ -112,14 +113,11 @@ namespace Launcher
                 .Start();
         }
 
-        private void OnServerClicked(object? sender, RoutedEventArgs e, int serverId)
+        private async void OnServerClicked(object? sender, RoutedEventArgs e, int serverId)
         {
-            //IArchiveExtractor archiveExtractor = new ZipExtractor(_fileManager);
-            //var httpZipExtractor = new HttpZipExtractor(archiveExtractor);
-
-            //string javaDist = _manifest.Servers[serverId].JavaDistribution;
-            //string url = _manifest.JavaDistributions[javaDist].DownloadUrls[PlatformDetector.GetSystemInfo()];
-            //await httpZipExtractor.ExtractZip(javaDist, url);
+            if (_launchIsProcessing) return;
+            _launchIsProcessing = true;
+            _contentManager.StartServer(serverId, () => _launchIsProcessing = false);
         }
     }
 }

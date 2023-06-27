@@ -23,17 +23,25 @@ public class ContentManager
     private readonly FileManager _fileManager;
     private readonly ContentDownloader _contentDownloader;
     private readonly ArchiveExtractor _archiveExtractor;
+    private readonly HttpClient _httpClient;
 
     private Manifest _manifest = null!;
+    private Settings _settings = null!;
 
-    public ContentManager()
+    public ContentManager(HttpClient httpClient)
     {
         _fileManager = new FileManager(GetLocalDataPath("BrimWorld"));
-        _contentDownloader = new ContentDownloader(_fileManager);
-        _archiveExtractor = new ArchiveExtractor(_fileManager);
+        _contentDownloader = new ContentDownloader(httpClient, _fileManager);
+        _archiveExtractor = new ArchiveExtractor(_contentDownloader, _fileManager);
+        _httpClient = httpClient;
     }
 
     public async Task<bool> Initialize()
+    {
+        return await PrepareManifest() && await PrepareSettings();
+    }
+
+    private async Task<bool> PrepareManifest()
     {
         Manifest? manifest = await _contentDownloader.LoadManifest();
 
@@ -66,20 +74,39 @@ public class ContentManager
             await SaveBanner(i);
         }
 
-        //OnManifestLoaded?.Invoke(this, EventArgs.Empty);
+        return true;
+    }
+
+    private async Task<bool> PrepareSettings()
+    {
+        Settings? settings = await _contentDownloader.LoadSettings();
+
+        if (settings == null)
+        {
+            _settings = settings = new Settings();
+            await SaveSettings();
+        }
+
+        _settings = settings;
 
         return true;
     }
 
-    private async Task SaveBanner(int serverIndex)
+    private async Task SaveSettings()
     {
-        if (serverIndex >= _manifest.Servers.Count) return;
-        string fileName = Path.GetFileName(_manifest.Servers[serverIndex].BannerUrl);
+        await using Stream stream = _fileManager.CreateFile(ContentDownloader.SettingsPath);
+        await JsonSerializer.SerializeAsync(stream, _settings, SettingsContext.Default.Settings);
+    }
+
+    private async Task SaveBanner(int serverId)
+    {
+        if (GetServerManifest(serverId) is not { } serverManifest) return;
+        string fileName = Path.GetFileName(serverManifest.BannerUrl);
         string localFilePath = Path.Join(LauncherDataPath, fileName);
 
-        string url = _manifest.Servers[serverIndex].BannerUrl;
-        using var httpClient = new HttpClient();
-        using HttpResponseMessage response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+        string url = serverManifest.BannerUrl;
+
+        using HttpResponseMessage response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
         response.EnsureSuccessStatusCode();
 
         var etag = "";
@@ -104,25 +131,26 @@ public class ContentManager
 
         //Debug.WriteLine("etag != md5_sum:");
         //Debug.WriteLine(etag);
-        //Debug.WriteLine(md5_sum);
+        //Debug.WriteLine(md5Sum);
 
-        await using Stream contentStream = await response.Content.ReadAsStreamAsync();
-
-        await using Stream stream = _fileManager.CreateFile(Path.Join(LauncherDataPath, fileName));
-        await contentStream.CopyToAsync(stream);
+        await _contentDownloader.DownloadFile(url, async contentStream =>
+        {
+            await using Stream stream = _fileManager.CreateFile(Path.Join(LauncherDataPath, fileName));
+            await contentStream.CopyToAsync(stream);
+        });
     }
 
-    public async Task<Bitmap?> GetBanner(int serverIndex)
+    public async Task<Bitmap?> GetBanner(int serverId)
     {
-        if (serverIndex >= _manifest.Servers.Count) return null;
-        string fileName = Path.GetFileName(_manifest.Servers[serverIndex].BannerUrl);
+        if (GetServerManifest(serverId) is not { } serverManifest) return null;
+        string fileName = Path.GetFileName(serverManifest.BannerUrl);
         await using Stream stream = _fileManager.ReadFile(Path.Join(LauncherDataPath, fileName));
         return new Bitmap(stream);
     }
 
-    public bool IsServerEnabled(int serverIndex)
+    public bool IsServerEnabled(int serverId)
     {
-        return serverIndex < _manifest.Servers.Count && _manifest.Servers[serverIndex].Enabled;
+        return GetServerManifest(serverId) is { Enabled: true };
     }
 
     public static string GetLocalDataPath(params string[] relativePath)
@@ -131,5 +159,31 @@ public class ContentManager
         path[0] = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         Array.Copy(relativePath, 0, path, 1, relativePath.Length);
         return Path.Join(path);
+    }
+
+    private ServerManifest? GetServerManifest(int serverId)
+    {
+        if (serverId >= _manifest.Servers.Count || serverId < 0) return null;
+        return _manifest.Servers[serverId];
+    }
+
+    public async void StartServer(int serverId, Action onComplete)
+    {
+        if (GetServerManifest(serverId) is not { } serverManifest) return;
+
+        await InstallJava(serverManifest.JavaDistribution);
+
+        onComplete?.Invoke();
+    }
+
+    private async Task InstallJava(string javaDist)
+    {
+        if (!_settings.DownloadedContent.Contains(javaDist))
+        {
+            JavaManifest javaManifest = _manifest.JavaDistributions[javaDist];
+            await _contentDownloader.DownloadJava(javaDist, javaManifest, _archiveExtractor);
+            _settings.DownloadedContent.Add(javaDist);
+            await SaveSettings();
+        }
     }
 }
