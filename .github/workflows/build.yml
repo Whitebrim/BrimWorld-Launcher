@@ -18,8 +18,6 @@ jobs:
               /p:PublishProfile=Win-x64
             artifacts: |-
               .\bin\Release\net7.0\publish\win-x64\*.exe
-            folder: |-
-              .\bin\Release\net7.0\publish\win-x64\
           #- os: macos-latest
           #- os: ubuntu-latest
     env:
@@ -47,14 +45,12 @@ jobs:
       
       - name: Sign
         if: ${{ startsWith(matrix.name, 'windows-') }}
-        uses: GabrielAcostaEngler/signtool-code-sign@main
+        uses: dlemstra/code-sign-action@v1
         with:
           certificate: '${{ secrets.WINDOWS_PFX_FILE }}'
-          cert-password: '${{ secrets.WINDOWS_PFX_PASSWORD }}'
-          cert-sha1: '${{ secrets.WINDOWS_PFX_THUMBPRINT }}'
-          cert-description: 'BrimWorld self-signed certificate'
-          folder: ${{ matrix.folder }}
-          recursive: false
+          password: '${{ secrets.WINDOWS_PFX_PASSWORD }}'
+          files: ${{ matrix.artifacts }}
+          description: 'BrimWorld self-signed'
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3.1.2
