@@ -50,6 +50,7 @@ namespace Launcher.Models
 
     public class ServerManifest
     {
+        public int Version { get; init; } = 0;
         public string Name { get; init; } = "";
         public bool Enabled { get; init; } = true;
         public string BannerUrl { get; init; } = "";
@@ -66,4 +67,8 @@ namespace Launcher.Models
     [JsonSourceGenerationOptions(WriteIndented = true)]
     [JsonSerializable(typeof(Manifest))]
     public partial class ManifestContext : JsonSerializerContext { }
+
+    [JsonSourceGenerationOptions(WriteIndented = true)]
+    [JsonSerializable(typeof(ServerManifest))]
+    public partial class ServerManifestContext : JsonSerializerContext { }
 }

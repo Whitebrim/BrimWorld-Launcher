@@ -5,9 +5,11 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Launcher.Services;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using Avalonia.Media.Imaging;
+using AvaloniaProgressRing;
 using Debug = System.Diagnostics.Debug;
 
 namespace Launcher
@@ -16,6 +18,7 @@ namespace Launcher
     {
         private const float WindowScale = 0.8f;
         private readonly ContentManager _contentManager;
+        private List<ProgressRing> _progressRings = new List<ProgressRing>();
         private bool _launchIsProcessing = false;
 
         public MainWindow()
@@ -41,13 +44,17 @@ namespace Launcher
 
         private async void InitButtons()
         {
+            _progressRings.Add(firstServerLoadingBar);
+            _progressRings.Add(secondServerLoadingBar);
             firstServerButton.Click += (s, e) => OnServerClicked(s, e, 0);
             secondServerButton.Click += (s, e) => OnServerClicked(s, e, 1);
             firstServerButton.IsEnabled = _contentManager.IsServerEnabled(0);
             secondServerButton.IsEnabled = _contentManager.IsServerEnabled(1);
             settingsButton.IsEnabled = true;
-            firstServerLoadingBar.IsActive = false;
-            secondServerLoadingBar.IsActive = false;
+            foreach (ProgressRing ring in _progressRings)
+            {
+                ring.IsActive = false;
+            }
             (firstServerButton.Content as Image)!.Source = await _contentManager.GetBanner(0);
             (secondServerButton.Content as Image)!.Source = await _contentManager.GetBanner(1);
         }
@@ -117,7 +124,12 @@ namespace Launcher
         {
             if (_launchIsProcessing) return;
             _launchIsProcessing = true;
-            _contentManager.StartServer(serverId, () => _launchIsProcessing = false);
+            _progressRings[serverId].IsActive = true;
+            _contentManager.StartServer(serverId, () =>
+            {
+                _progressRings[serverId].IsActive = false;
+                _launchIsProcessing = false;
+            });
         }
     }
 }

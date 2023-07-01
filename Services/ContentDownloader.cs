@@ -11,9 +11,10 @@ namespace Launcher.Services;
 
 public class ContentDownloader
 {
-    private const string ApiUrl = "https://api.brimworld.ru/";
+    private const string ApiUrl = "https://api.brimworld.online/";
     public const string ManifestPath = "launcher-manifest.json";
     public const string SettingsPath = "launcher-settings.json";
+    public const string MinecraftPath = "Minecraft/";
     private readonly FileManager _fileManager;
     private readonly HttpClient _httpClient;
 

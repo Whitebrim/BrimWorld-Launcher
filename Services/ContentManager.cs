@@ -173,6 +173,8 @@ public class ContentManager
 
         await InstallJava(serverManifest.JavaDistribution);
 
+
+
         onComplete?.Invoke();
     }
 
