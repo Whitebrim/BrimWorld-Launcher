@@ -5,12 +5,12 @@
              x:Class="Launcher.SettingsView"
              Width="495" Height="855">
   <UserControl.Background>
-    <ImageBrush Source="avares://Launcher/Assets/Background settings.png"/>
+    <ImageBrush Source="{StaticResource Background settings}"/>
   </UserControl.Background>
 
   <Viewbox Stretch="Uniform">
     <Canvas Width="2224" Height="3840">
-      <Image Source="avares://Launcher/Assets/Settings window.png"
+      <Image Source="{StaticResource Settings window}"
              Width="1711"
              Height="1605"
              Canvas.Left="249"
@@ -20,7 +20,7 @@
               Click="OnFolderClicked"
               Canvas.Left="1600"
               Canvas.Top="430">
-        <Image Source="avares://Launcher/Assets/Folder.png"/>
+        <Image Source="{StaticResource Folder}"/>
       </Button>
 
       <TextBox Name="username"
@@ -63,20 +63,20 @@
           <Image Classes="closeOnLaunch-on"
                  Width="45"
                  Height="45"
-                 Source="avares://Launcher/Assets/Cheсk.png"/>
+                 Source="{StaticResource Cheсk}"/>
         </Panel>
       </ToggleButton>
 
       <Button Classes="ConfirmButtons" Name="applyButton"
               Click="OnApplyClicked"
               Canvas.Left="1160">
-        <Image Source="avares://Launcher/Assets/Ok button.png"/>
+        <Image Source="{StaticResource Ok button}"/>
       </Button>
 
       <Button Classes="ConfirmButtons" Name="cancelButton" IsCancel="true"
               Click="OnCancelClicked"
               Canvas.Left="470">
-        <Image Source="avares://Launcher/Assets/Cancel button.png"/>
+        <Image Source="{StaticResource Cancel button}"/>
       </Button>
     </Canvas>
   </Viewbox>

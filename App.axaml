@@ -9,5 +9,11 @@
 	</Application.Styles>
   <Application.Resources>
     <FontFamily x:Key="Leto">avares://Launcher/Assets/Leto.otf#Leto Text Sans Defect</FontFamily>
+    <Bitmap x:Key="Background settings">avares://Launcher/Assets/Background settings.png</Bitmap>
+    <Bitmap x:Key="Settings window">avares://Launcher/Assets/Settings window.png</Bitmap>
+    <Bitmap x:Key="Folder">avares://Launcher/Assets/Folder.png</Bitmap>
+    <Bitmap x:Key="Cheсk">avares://Launcher/Assets/Cheсk.png</Bitmap>
+    <Bitmap x:Key="Ok button">avares://Launcher/Assets/Ok button.png</Bitmap>
+    <Bitmap x:Key="Cancel button">avares://Launcher/Assets/Cancel button.png</Bitmap>
   </Application.Resources>
 </Application>
