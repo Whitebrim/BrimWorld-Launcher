@@ -8,7 +8,8 @@ namespace Launcher;
 
 public partial class SettingsView : UserControl
 {
-    public Action onApplyClicked, onCancelClicked;
+    public Action onApplyClicked = null!;
+    public Action onCancelClicked = null!;
     public string Username => username.Text ?? "";
     public int Memory
     {
