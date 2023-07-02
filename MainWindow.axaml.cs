@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
-using Avalonia.Media.Imaging;
 using AvaloniaProgressRing;
 using Debug = System.Diagnostics.Debug;
 
@@ -20,6 +19,7 @@ namespace Launcher
         private readonly ContentManager _contentManager;
         private List<ProgressRing> _progressRings = new List<ProgressRing>();
         private bool _launchIsProcessing = false;
+        private bool _settingsViewIsOpen = false;
 
         public MainWindow()
         {
@@ -35,11 +35,20 @@ namespace Launcher
             if (success)
             {
                 InitButtons();
+                InitSettingsView();
             }
             else
             {
                 Debug.WriteLine("OnLoaded can't access internet, show window and close");
             }
+        }
+
+        private void InitSettingsView()
+        {
+            settingsView.onApplyClicked += OnSettingsApplyClicked;
+            settingsView.onCancelClicked += OnSettingsCancelClicked;
+            var settings = _contentManager.GetSettings();
+            settingsView.UpdateView(settings.Username, settings.UseMemoryMB, settings.CloseLauncher);
         }
 
         private async void InitButtons()
@@ -101,11 +110,34 @@ namespace Launcher
 
         private void OnSettingsClicked(object? sender, RoutedEventArgs e)
         {
-            new Process
+            if (_settingsViewIsOpen) return;
+            ChangeSettingsViewVisibility(open: true);
+        }
+
+        private void OnSettingsCancelClicked()
+        {
+            ChangeSettingsViewVisibility(open: false);
+        }
+
+        private async void OnSettingsApplyClicked()
+        {
+            var settings = _contentManager.GetSettings();
+            settings.Username = settingsView.Username;
+            settings.UseMemoryMB = settingsView.Memory;
+            settings.CloseLauncher = settingsView.CloseOnLaunch;
+            await _contentManager.SaveSettings(settings);
+            ChangeSettingsViewVisibility(open: false);
+        }
+
+        private void ChangeSettingsViewVisibility(bool open)
+        {
+            _settingsViewIsOpen = open;
+            settingsView.IsVisible = open;
+            if (!open)
             {
-                StartInfo = new ProcessStartInfo("file://" + ContentManager.GetLocalDataPath("BrimWorld"))
-                { UseShellExecute = true }
-            }.Start();
+                var settings = _contentManager.GetSettings();
+                settingsView.UpdateView(settings.Username, settings.UseMemoryMB, settings.CloseLauncher);
+            }
         }
 
         private void OnVKClicked(object? sender, RoutedEventArgs e)

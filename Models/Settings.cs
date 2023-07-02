@@ -6,13 +6,13 @@ namespace Launcher.Models
     public class Settings
     {
         public string Username { get; set; } = "";
-        public int WindowSizeX { get; init; } = 480;
-        public int WindowSizeY { get; init; } = 854;
-        public bool FullScreen { get; init; } = false;
-        public bool CloseLauncher { get; init; } = true;
-        public int UseMemoryMB { get; init; } = 6144;
-        public string JavaArguments { get; init; } = "";
-        public List<string> DownloadedContent { get; init; } = new List<string>();
+        public int WindowSizeX { get; set; } = 480;
+        public int WindowSizeY { get; set; } = 854;
+        public bool FullScreen { get; set; } = false;
+        public bool CloseLauncher { get; set; } = true;
+        public int UseMemoryMB { get; set; } = 4096;
+        public string JavaArguments { get; set; } = "";
+        public List<string> DownloadedContent { get; set; } = new List<string>();
     }
 
     [JsonSourceGenerationOptions(WriteIndented = true)]

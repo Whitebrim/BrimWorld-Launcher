@@ -7,4 +7,7 @@
     <FluentTheme />
     <StyleInclude Source="avares://AvaloniaProgressRing/Styles/ProgressRing.xaml"/>
 	</Application.Styles>
+  <Application.Resources>
+    <FontFamily x:Key="Leto">avares://Launcher/Assets/Leto.otf#Leto Text Sans Defect</FontFamily>
+  </Application.Resources>
 </Application>

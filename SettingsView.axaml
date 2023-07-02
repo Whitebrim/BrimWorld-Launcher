@@ -1,0 +1,199 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             x:Class="Launcher.SettingsView"
+             Width="495" Height="855">
+  <UserControl.Background>
+    <ImageBrush Source="/Assets/Background settings.png"/>
+  </UserControl.Background>
+
+  <Viewbox Stretch="Uniform">
+    <Canvas Width="2224" Height="3840">
+      <Image Source="/Assets/Settings window.png"
+             Width="1711"
+             Height="1605"
+             Canvas.Left="249"
+             Canvas.Top="400"/>
+
+      <Button Classes="ForderButton" Name="folderButton"
+              Click="OnFolderClicked"
+              Canvas.Left="1600"
+              Canvas.Top="430">
+        <Image Source="/Assets/Folder.png"/>
+      </Button>
+
+      <TextBox Name="username"
+               Classes="Input"
+               Width="920"
+               Height="93"
+               Canvas.Left="925"
+               Canvas.Top="763"
+               FontFamily="{StaticResource Leto}"
+               MaxLength="16"
+               Foreground="Gold"
+               BorderThickness="0"
+               TextAlignment="Center"
+               VerticalAlignment="Bottom"
+               Watermark="Введи сюда свой никнейм"
+               FontSize="80"/>
+
+      <TextBox Name="memory"
+               Classes="Input"
+               Width="250"
+               Height="93"
+               Canvas.Left="1325"
+               Canvas.Top="1148"
+               FontFamily="{StaticResource Leto}"
+               MaxLength="5"
+               Foreground="Gold"
+               BorderThickness="0"
+               TextAlignment="Center"
+               VerticalAlignment="Bottom"
+               FontSize="80"/>
+
+      <ToggleButton Name="closeOnLaunch"
+                    Classes="Toggle"
+                    Width="120"
+                    Height="120"
+                    Canvas.Left="1713"
+                    Canvas.Top="1561"
+                    IsChecked="true">
+        <Panel>
+          <Image Classes="closeOnLaunch-on"
+                 Width="45"
+                 Height="45"
+                 Source="/Assets/Cheсk.png"/>
+        </Panel>
+      </ToggleButton>
+
+      <Button Classes="ConfirmButtons" Name="applyButton"
+              Click="OnApplyClicked"
+              Canvas.Left="1160">
+        <Image Source="/Assets/Ok button.png"/>
+      </Button>
+
+      <Button Classes="ConfirmButtons" Name="cancelButton" IsCancel="true"
+              Click="OnCancelClicked"
+              Canvas.Left="470">
+        <Image Source="/Assets/Cancel button.png"/>
+      </Button>
+    </Canvas>
+  </Viewbox>
+
+  <UserControl.Styles>
+    <Style Selector="Button.ConfirmButtons">
+      <Setter Property="Width" Value="591"/>
+      <Setter Property="Height" Value="176"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Canvas.Top" Value="1720"/>
+    </Style>
+
+    <Style Selector="Button.ConfirmButtons:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.ConfirmButtons:pressed /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.ConfirmButtons:disabled /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.ConfirmButtons > Image">
+      <Setter Property="Width" Value="575" />
+      <Setter Property="Height" Value="172" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <DoubleTransition Property="Width" Duration="0:0:0.05" />
+          <DoubleTransition Property="Height" Duration="0:0:0.05" />
+        </Transitions>
+      </Setter>
+    </Style>
+
+    <Style Selector="Button.ConfirmButtons:pointerover > Image">
+      <Setter Property="Width" Value="567" />
+      <Setter Property="Height" Value="168" />
+    </Style>
+
+    <Style Selector="Button.ConfirmButtons:pressed > Image">
+      <Setter Property="Width" Value="591" />
+      <Setter Property="Height" Value="176" />
+    </Style>
+
+
+    <Style Selector="Button.ForderButton">
+      <Setter Property="Width" Value="245"/>
+      <Setter Property="Height" Value="223"/>
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="Button.ForderButton:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.ForderButton:pressed /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.ForderButton:disabled /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.ForderButton > Image">
+      <Setter Property="Width" Value="229" />
+      <Setter Property="Height" Value="207" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <DoubleTransition Property="Width" Duration="0:0:0.05" />
+          <DoubleTransition Property="Height" Duration="0:0:0.05" />
+        </Transitions>
+      </Setter>
+    </Style>
+
+    <Style Selector="Button.ForderButton:pointerover > Image">
+      <Setter Property="Width" Value="225" />
+      <Setter Property="Height" Value="203" />
+    </Style>
+
+    <Style Selector="Button.ForderButton:pressed > Image">
+      <Setter Property="Width" Value="245" />
+      <Setter Property="Height" Value="223" />
+    </Style>
+
+    
+    <Style Selector="TextBox.Input">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="TextBox.Input:pointerover /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+    <Style Selector="TextBox.Input:focus-within /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <Style Selector="TextBox.Input:focus-within:pointerover /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+
+
+    <Style Selector="ToggleButton.Toggle:checked /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="ToggleButton.Toggle:unchecked /template/ ContentPresenter">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="ToggleButton.Toggle Image.closeOnLaunch-on">
+      <Setter Property="IsVisible" Value="False"/>
+    </Style>
+    <Style Selector="ToggleButton.Toggle:checked Image.closeOnLaunch-on">
+      <Setter Property="IsVisible" Value="True"/>
+    </Style>
+  </UserControl.Styles>
+</UserControl>

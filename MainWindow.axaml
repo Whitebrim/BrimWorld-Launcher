@@ -1,6 +1,7 @@
 
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="using:Launcher"
         xmlns:progRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
         xmlns:avaloniaProgressRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
         x:Class="Launcher.MainWindow"
@@ -21,24 +22,6 @@
 
   <Viewbox Stretch="Uniform">
     <Canvas Width="2224" Height="3840">
-      <Button Classes="TitlebarButton" Name="settingsButton"
-              Click="OnSettingsClicked" IsEnabled="False"
-              Canvas.Left="1776">
-        <Image Source="/Assets/Setting button.png"/>
-      </Button>
-
-      <Button Classes="TitlebarButton" Name="minimizeButton"
-              Canvas.Left="1918"
-              Click="MinimizeApplication">
-        <Image Source="/Assets/Minimize button.png"/>
-      </Button>
-
-      <Button Classes="TitlebarButton" Name="closeButton"
-              Click="ExitApplication"
-              Canvas.Left="2060">
-        <Image Source="/Assets/Close button.png"/>
-      </Button>
-
       <Button Classes="SocialButton" Name="vkButton"
               Click="OnVKClicked"
               Canvas.Left="80">
@@ -74,6 +57,29 @@
                              Canvas.Top="3160" Canvas.Left="980"
                              IsActive="True"
                              Foreground="White"/>
+
+      <v:SettingsView Name="settingsView"
+                      Width="2224"
+                      Height="3840"
+                      IsVisible="False"/>
+      
+      <Button Classes="TitlebarButton" Name="settingsButton"
+              Click="OnSettingsClicked" IsEnabled="False"
+              Canvas.Left="1776">
+        <Image Source="/Assets/Setting button.png"/>
+      </Button>
+
+      <Button Classes="TitlebarButton" Name="minimizeButton"
+              Canvas.Left="1918"
+              Click="MinimizeApplication">
+        <Image Source="/Assets/Minimize button.png"/>
+      </Button>
+
+      <Button Classes="TitlebarButton" Name="closeButton"
+              Click="ExitApplication"
+              Canvas.Left="2060">
+        <Image Source="/Assets/Close button.png"/>
+      </Button>
     </Canvas>
   </Viewbox>
 

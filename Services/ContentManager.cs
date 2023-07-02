@@ -84,7 +84,7 @@ public class ContentManager
         if (settings == null)
         {
             _settings = settings = new Settings();
-            await SaveSettings();
+            await SaveSettings(_settings);
         }
 
         _settings = settings;
@@ -92,10 +92,13 @@ public class ContentManager
         return true;
     }
 
-    private async Task SaveSettings()
+    public Settings GetSettings() => _settings;
+
+    public async Task SaveSettings(Settings settings)
     {
+        _settings = settings;
         await using Stream stream = _fileManager.CreateFile(ContentDownloader.SettingsPath);
-        await JsonSerializer.SerializeAsync(stream, _settings, SettingsContext.Default.Settings);
+        await JsonSerializer.SerializeAsync(stream, settings, SettingsContext.Default.Settings);
     }
 
     private async Task SaveBanner(int serverId)
@@ -185,7 +188,7 @@ public class ContentManager
             JavaManifest javaManifest = _manifest.JavaDistributions[javaDist];
             await _contentDownloader.DownloadJava(javaDist, javaManifest, _archiveExtractor);
             _settings.DownloadedContent.Add(javaDist);
-            await SaveSettings();
+            await SaveSettings(_settings);
         }
     }
 }
