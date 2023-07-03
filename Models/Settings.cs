@@ -10,7 +10,7 @@ namespace Launcher.Models
         public int WindowSizeY { get; set; } = 854;
         public bool FullScreen { get; set; } = false;
         public bool CloseLauncher { get; set; } = false;
-        public int UseMemoryMB { get; set; } = 4096;
+        public int UseMemoryMB { get; set; } = 6144;
         public string JavaArguments { get; set; } = "";
         public List<string> DownloadedContent { get; set; } = new List<string>();
     }

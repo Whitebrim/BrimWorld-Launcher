@@ -194,13 +194,13 @@ public class ContentManager
 
         var localServerManifest = await _contentDownloader.LoadServerManifest(serverManifest.Alias);
 
-        if (localServerManifest is not null)
+        if (localServerManifest is null || localServerManifest.Version < serverManifest.Version)
         {
-            if (localServerManifest.Version >= serverManifest.Version)
-            {
-                LaunchMinecraft(localServerManifest);
-            }
+            await InstallMinecraft(serverManifest);
+            localServerManifest = serverManifest;
         }
+
+        LaunchMinecraft(localServerManifest);
 
         onComplete?.Invoke();
     }
@@ -239,6 +239,11 @@ public class ContentManager
             _settings.DownloadedContent.Add(javaDist);
             await SaveSettings(_settings);
         }
+    }
+
+    private async Task InstallMinecraft(ServerManifest serverManifest)
+    {
+        await _contentDownloader.DownloadMinecraft(serverManifest, _archiveExtractor);
     }
 
     private bool IsLauncherUpdated()

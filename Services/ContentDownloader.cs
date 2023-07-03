@@ -94,6 +94,12 @@ public class ContentDownloader
         await archiveExtractor.ExtractZip(Path.Join(JavaPath, javaDist), downloadUrl);
     }
 
+    public async Task DownloadMinecraft(ServerManifest serverManifest, ArchiveExtractor archiveExtractor)
+    {
+        string downloadUrl = serverManifest.ClientUrl;
+        await archiveExtractor.ExtractZip(Path.Join(MinecraftPath, serverManifest.Alias), downloadUrl);
+    }
+
     private async Task DownloadFileFromApi(string relativePath, Func<Stream, Task> action)
     {
         await DownloadFile(Url.Combine(ApiUrl, relativePath), action);
