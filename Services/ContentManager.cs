@@ -1,11 +1,17 @@
-﻿using Avalonia.Media.Imaging;
+﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Media.Imaging;
+using Launcher.Extensions;
 using Launcher.Models;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Debug = System.Diagnostics.Debug;
 
@@ -17,6 +23,7 @@ public class ContentManager
     //public static ContentManager Instance => LazyLoader.Value;
 
     private const string LauncherDataPath = "Launcher";
+    private const string RootPath = "BrimWorld";
 
     //public event EventHandler OnManifestLoaded;
 
@@ -30,7 +37,7 @@ public class ContentManager
 
     public ContentManager(HttpClient httpClient)
     {
-        _fileManager = new FileManager(GetLocalDataPath("BrimWorld"));
+        _fileManager = new FileManager(GetLocalDataPath(RootPath));
         _contentDownloader = new ContentDownloader(httpClient, _fileManager);
         _archiveExtractor = new ArchiveExtractor(_contentDownloader, _fileManager);
         _httpClient = httpClient;
@@ -50,7 +57,7 @@ public class ContentManager
         if (manifest == null && newManifest == null)
         {
             // TODO Плашка что сервер недоступен
-            Debug.WriteLine("ПИЗДА ИНТЕРНЕТУ, ИГРАТЬ НЕВОЗМОЖНО!");
+            Debug.WriteLine("НЕТ ИНТЕРНЕТА, ИГРАТЬ НЕВОЗМОЖНО!");
             return false;
         }
 
@@ -72,6 +79,13 @@ public class ContentManager
         for (var i = 0; i < _manifest.Servers.Count; i++)
         {
             await SaveBanner(i);
+        }
+
+        if (!IsLauncherUpdated())
+        {
+            new Process { StartInfo = new ProcessStartInfo(_manifest.UpdateLauncherUrl) { UseShellExecute = true } }
+                .Start();
+            return false;
         }
 
         return true;
@@ -170,15 +184,50 @@ public class ContentManager
         return _manifest.Servers[serverId];
     }
 
-    public async void StartServer(int serverId, Action onComplete)
+    public async Task StartServer(int serverId, Action onComplete)
     {
+        if (!Regex.IsMatch(_settings.Username, @"^[a-zA-Z0-9_]{2,16}$")) throw new InvalidUsernameException();
+
         if (GetServerManifest(serverId) is not { } serverManifest) return;
 
         await InstallJava(serverManifest.JavaDistribution);
 
+        var localServerManifest = await _contentDownloader.LoadServerManifest(serverManifest.Alias);
 
+        if (localServerManifest is not null)
+        {
+            if (localServerManifest.Version >= serverManifest.Version)
+            {
+                LaunchMinecraft(localServerManifest);
+            }
+        }
 
         onComplete?.Invoke();
+    }
+
+    private void LaunchMinecraft(ServerManifest serverManifest)
+    {
+        var process = new Process();
+        process.StartInfo.WorkingDirectory = GetLocalDataPath(RootPath, ContentDownloader.MinecraftPath, serverManifest.Alias);
+        process.StartInfo.FileName = GetJavaPath(serverManifest.JavaDistribution);
+        process.StartInfo.Arguments =
+            string.Concat(
+                string.Format(serverManifest.JavaArgs, _settings.UseMemoryMB.ToString()),
+                string.Format(serverManifest.MinecraftArgs, _settings.Username));
+        if (process.Start() && _settings.CloseLauncher) // Close Launcher
+        {
+            Application? app = Application.Current;
+            if (app?.ApplicationLifetime is ClassicDesktopStyleApplicationLifetime lifetime)
+            {
+                lifetime.Shutdown();
+            }
+        }
+    }
+
+    private string GetJavaPath(string javaDist)
+    {
+        if (!_settings.DownloadedContent.Contains(javaDist)) return "";
+        return GetLocalDataPath(RootPath, ContentDownloader.JavaPath, javaDist, "bin/java.exe");
     }
 
     private async Task InstallJava(string javaDist)
@@ -190,5 +239,29 @@ public class ContentManager
             _settings.DownloadedContent.Add(javaDist);
             await SaveSettings(_settings);
         }
+    }
+
+    private bool IsLauncherUpdated()
+    {
+        var version = GetLauncherVersion();
+        string[] manifestVersion = _manifest.LauncherVersion.Split('.');
+        int manifestMajor = int.Parse(manifestVersion[0]);
+        int manifestMinor = int.Parse(manifestVersion[1]);
+        int manifestBuild = int.Parse(manifestVersion[2]);
+        int applicationMajor = version.Major;
+        int applicationMinor = version.Minor;
+        int applicationBuild = version.Build;
+        if (applicationMajor > manifestMajor) return true;
+        if (applicationMajor < manifestMajor) return false;
+        if (applicationMinor > manifestMinor) return true;
+        if (applicationMinor < manifestMinor) return false;
+        if (applicationBuild > manifestBuild) return true;
+        if (applicationBuild < manifestBuild) return false;
+        return true;
+    }
+
+    public Version GetLauncherVersion()
+    {
+        return Assembly.GetExecutingAssembly().GetName().Version;
     }
 }

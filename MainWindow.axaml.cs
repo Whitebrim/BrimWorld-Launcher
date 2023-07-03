@@ -10,6 +10,8 @@ using System.Diagnostics;
 using System.Net.Http;
 using AvaloniaProgressRing;
 using Debug = System.Diagnostics.Debug;
+using System.Reflection;
+using Launcher.Extensions;
 
 namespace Launcher
 {
@@ -55,8 +57,8 @@ namespace Launcher
         {
             _progressRings.Add(firstServerLoadingBar);
             _progressRings.Add(secondServerLoadingBar);
-            firstServerButton.Click += (s, e) => OnServerClicked(s, e, 0);
-            secondServerButton.Click += (s, e) => OnServerClicked(s, e, 1);
+            firstServerButton.Click += (s, e) => OnServerClicked(0);
+            secondServerButton.Click += (s, e) => OnServerClicked(1);
             firstServerButton.IsEnabled = _contentManager.IsServerEnabled(0);
             secondServerButton.IsEnabled = _contentManager.IsServerEnabled(1);
             settingsButton.IsEnabled = true;
@@ -123,7 +125,7 @@ namespace Launcher
         {
             var settings = _contentManager.GetSettings();
             settings.Username = settingsView.Username;
-            settings.UseMemoryMB = settingsView.Memory;
+            settings.UseMemoryMB = Math.Max(2048, settingsView.Memory);
             settings.CloseLauncher = settingsView.CloseOnLaunch;
             await _contentManager.SaveSettings(settings);
             ChangeSettingsViewVisibility(open: false);
@@ -152,16 +154,28 @@ namespace Launcher
                 .Start();
         }
 
-        private void OnServerClicked(object? sender, RoutedEventArgs e, int serverId)
+        private async void OnServerClicked(int serverId)
         {
             if (_launchIsProcessing) return;
             _launchIsProcessing = true;
             _progressRings[serverId].IsActive = true;
-            _contentManager.StartServer(serverId, () =>
+            try
+            {
+                await _contentManager.StartServer(serverId, () =>
+                {
+                    _progressRings[serverId].IsActive = false;
+                    _launchIsProcessing = false;
+                });
+            }
+            catch (InvalidUsernameException)
+            {
+                ChangeSettingsViewVisibility(open: true);
+            }
+            finally
             {
                 _progressRings[serverId].IsActive = false;
                 _launchIsProcessing = false;
-            });
+            }
         }
     }
 }

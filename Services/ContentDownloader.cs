@@ -14,7 +14,9 @@ public class ContentDownloader
     private const string ApiUrl = "https://api.brimworld.online/";
     public const string ManifestPath = "launcher-manifest.json";
     public const string SettingsPath = "launcher-settings.json";
+    public const string ServerManifestPath = "server-manifest.json";
     public const string MinecraftPath = "Minecraft/";
+    public const string JavaPath = "Java/";
     private readonly FileManager _fileManager;
     private readonly HttpClient _httpClient;
 
@@ -69,10 +71,27 @@ public class ContentDownloader
         }
     }
 
+    public async Task<ServerManifest?> LoadServerManifest(string serverAlias)
+    {
+        try
+        {
+            await using Stream stream = _fileManager.ReadFile(Path.Join(MinecraftPath, serverAlias, ServerManifestPath));
+            return JsonSerializer.Deserialize<ServerManifest>(stream, ServerManifestContext.Default.ServerManifest);
+        }
+        catch (Exception e)
+        {
+            if (e is FileNotFoundException or DirectoryNotFoundException)
+            {
+                return null;
+            }
+            throw;
+        }
+    }
+
     public async Task DownloadJava(string javaDist, JavaManifest javaManifest, ArchiveExtractor archiveExtractor)
     {
         string downloadUrl = javaManifest.DownloadUrls[PlatformDetector.GetSystemInfo()];
-        await archiveExtractor.ExtractZip(Path.Join("Java", javaDist), downloadUrl);
+        await archiveExtractor.ExtractZip(Path.Join(JavaPath, javaDist), downloadUrl);
     }
 
     private async Task DownloadFileFromApi(string relativePath, Func<Stream, Task> action)

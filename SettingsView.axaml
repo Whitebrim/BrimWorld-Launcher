@@ -58,7 +58,7 @@
                     Height="120"
                     Canvas.Left="1713"
                     Canvas.Top="1561"
-                    IsChecked="true">
+                    IsChecked="false">
         <Panel>
           <Image Classes="closeOnLaunch-on"
                  Width="45"

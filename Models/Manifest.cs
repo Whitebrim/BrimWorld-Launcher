@@ -6,7 +6,7 @@ namespace Launcher.Models
     public class Manifest
     {
         public int ManifestVersion { get; init; } = 0;
-        public int LauncherVersion { get; init; } = 0;
+        public string LauncherVersion { get; init; } = "1.0.0";
         public string UpdateLauncherUrl { get; init; } = "";
 
         public Dictionary<string, JavaManifest> JavaDistributions { get; init; } =
@@ -52,6 +52,7 @@ namespace Launcher.Models
     {
         public int Version { get; init; } = 0;
         public string Name { get; init; } = "";
+        public string Alias { get; init; } = "";
         public bool Enabled { get; init; } = true;
         public string BannerUrl { get; init; } = "";
         public string ClientUrl { get; init; } = "";
@@ -59,9 +60,9 @@ namespace Launcher.Models
         public string ServerIp { get; init; } = "";
         public string ServerPort { get; init; } = "";
 
-        public string[] JavaArgs { get; init; } = { };
+        public string JavaArgs { get; init; } = "";
 
-        public string[] MinecraftArgs { get; init; } = { };
+        public string MinecraftArgs { get; init; } = "";
     }
 
     [JsonSourceGenerationOptions(WriteIndented = true)]

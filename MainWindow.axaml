@@ -35,12 +35,12 @@
       </Button>
 
       <Button Classes="ServerButton" Name="firstServerButton"
-              Canvas.Top="1870" IsEnabled="true">
+              Canvas.Top="1870" IsEnabled="false">
         <Image Source="/Assets/Placeholder button.png"/>
       </Button>
 
       <Button Classes="ServerButton" Name="secondServerButton"
-              Canvas.Top="2780" IsEnabled="False">
+              Canvas.Top="2780" IsEnabled="false">
         <Image Source="/Assets/Placeholder button.png"/>
       </Button>
 
