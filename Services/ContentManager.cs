@@ -267,6 +267,6 @@ public class ContentManager
 
     public Version GetLauncherVersion()
     {
-        return Assembly.GetExecutingAssembly().GetName().Version;
+        return Assembly.GetExecutingAssembly().GetName().Version!;
     }
 }
