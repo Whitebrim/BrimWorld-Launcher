@@ -11,8 +11,6 @@
   <Viewbox Stretch="Uniform">
     <Canvas Width="2224" Height="3840">
       <Image Source="{StaticResource Settings window}"
-             Width="1711"
-             Height="1605"
              Canvas.Left="249"
              Canvas.Top="400"/>
 
