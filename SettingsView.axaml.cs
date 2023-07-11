@@ -3,6 +3,7 @@ using Avalonia.Interactivity;
 using Launcher.Services;
 using System;
 using System.Diagnostics;
+using Launcher.Models;
 
 namespace Launcher;
 
@@ -23,17 +24,19 @@ public partial class SettingsView : UserControl
         }
     }
     public bool CloseOnLaunch => closeOnLaunch.IsChecked ?? true;
+    public bool OpenConsole => openConsole.IsChecked ?? true;
 
     public SettingsView()
     {
         InitializeComponent();
     }
 
-    public void UpdateView(string username, int memory, bool closeOnLaunch)
+    public void UpdateView(Settings settings)
     {
-        this.username.Text = username;
-        this.memory.Text = memory.ToString();
-        this.closeOnLaunch.IsChecked = closeOnLaunch;
+        this.username.Text = settings.Username;
+        this.memory.Text = settings.UseMemoryMB.ToString();
+        this.closeOnLaunch.IsChecked = settings.CloseLauncher;
+        this.openConsole.IsChecked = settings.OpenConsole;
     }
 
     private void OnApplyClicked(object? sender, RoutedEventArgs e)

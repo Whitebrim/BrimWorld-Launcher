@@ -173,7 +173,7 @@ public class ContentManager
     public static string GetLocalDataPath(params string[] relativePath)
     {
         var path = new string[relativePath.Length + 1];
-        path[0] = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        path[0] = LaunchSettings.Instance.DataPath;
         Array.Copy(relativePath, 0, path, 1, relativePath.Length);
         return Path.Join(path);
     }
@@ -227,7 +227,8 @@ public class ContentManager
     private string GetJavaPath(string javaDist)
     {
         if (!_settings.DownloadedContent.Contains(javaDist)) return "";
-        return GetLocalDataPath(RootPath, ContentDownloader.JavaPath, javaDist, "bin/java.exe");
+        string javaPath = _settings.OpenConsole ? "bin/java.exe" : "bin/javaw.exe";
+        return GetLocalDataPath(RootPath, ContentDownloader.JavaPath, javaDist, javaPath);
     }
 
     private async Task InstallJava(string javaDist)

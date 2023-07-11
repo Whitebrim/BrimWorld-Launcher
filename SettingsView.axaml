@@ -51,7 +51,7 @@
                FontSize="80"/>
 
       <ToggleButton Name="closeOnLaunch"
-                    Classes="Toggle"
+                    Classes="Toggle CloseLauncher"
                     Width="120"
                     Height="120"
                     Canvas.Left="1713"
@@ -59,6 +59,21 @@
                     IsChecked="false">
         <Panel>
           <Image Classes="closeOnLaunch-on"
+                 Width="45"
+                 Height="45"
+                 Source="{StaticResource Cheсk}"/>
+        </Panel>
+      </ToggleButton>
+
+      <ToggleButton Name="openConsole"
+                    Classes="Toggle OpenConsole"
+                    Width="120"
+                    Height="120"
+                    Canvas.Left="1592"
+                    Canvas.Top="1718"
+                    IsChecked="true">
+        <Panel>
+          <Image Classes="openConsole-on"
                  Width="45"
                  Height="45"
                  Source="{StaticResource Cheсk}"/>
@@ -84,7 +99,7 @@
       <Setter Property="Width" Value="591"/>
       <Setter Property="Height" Value="176"/>
       <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="Canvas.Top" Value="1720"/>
+      <Setter Property="Canvas.Top" Value="1860"/>
     </Style>
 
     <Style Selector="Button.ConfirmButtons:pointerover /template/ ContentPresenter">
@@ -187,10 +202,17 @@
       <Setter Property="Background" Value="Transparent"/>
     </Style>
 
-    <Style Selector="ToggleButton.Toggle Image.closeOnLaunch-on">
+    <Style Selector="ToggleButton.CloseLauncher Image.closeOnLaunch-on">
       <Setter Property="IsVisible" Value="False"/>
     </Style>
-    <Style Selector="ToggleButton.Toggle:checked Image.closeOnLaunch-on">
+    <Style Selector="ToggleButton.CloseLauncher:checked Image.closeOnLaunch-on">
+      <Setter Property="IsVisible" Value="True"/>
+    </Style>
+
+    <Style Selector="ToggleButton.OpenConsole Image.openConsole-on">
+      <Setter Property="IsVisible" Value="False"/>
+    </Style>
+    <Style Selector="ToggleButton.OpenConsole:checked Image.openConsole-on">
       <Setter Property="IsVisible" Value="True"/>
     </Style>
   </UserControl.Styles>

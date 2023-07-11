@@ -7,28 +7,61 @@ using Launcher.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using AvaloniaProgressRing;
 using Debug = System.Diagnostics.Debug;
 using System.Reflection;
 using Launcher.Extensions;
+using CommandLine;
+using Launcher.Models;
 
 namespace Launcher
 {
     public partial class MainWindow : Window
     {
         private const float WindowScale = 0.8f;
-        private readonly ContentManager _contentManager;
-        private List<ProgressRing> _progressRings = new List<ProgressRing>();
+        private ContentManager _contentManager;
+        private readonly List<ProgressRing> _progressRings = new List<ProgressRing>();
         private bool _launchIsProcessing = false;
         private bool _settingsViewIsOpen = false;
 
         public MainWindow()
         {
+            Application? app = Application.Current;
+            if (app?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopLifetime)
+            {
+                desktopLifetime!.Startup += (sender, args) =>
+                {
+                    Init(args.Args);
+                };
+            }
+        }
+
+        private void Init(IEnumerable<string> args)
+        {
+            ParseLaunchArgs(args);
             _contentManager = new ContentManager(new HttpClient());
             InitializeComponent();
 
             InitialResize();
+        }
+
+        private void ParseLaunchArgs(IEnumerable<string> args)
+        {
+            Parser.Default.ParseArguments<CommandLineOptions>(args)
+                .WithParsed<CommandLineOptions>(o =>
+                {
+                    if (!string.IsNullOrEmpty(o.Path))
+                    {
+                        DirectoryInfo dir = System.IO.Directory.CreateDirectory(o.Path);
+                        if (!dir.Exists)
+                        {
+                            throw new LaunchArgumentException($"Invalid launch argument: Path {o.Path} cant be created.");
+                        }
+                        LaunchSettings.Instance.DataPath = o.Path;
+                    }
+                });
         }
 
         private async void OnLoaded(object? sender, RoutedEventArgs e)
@@ -50,7 +83,7 @@ namespace Launcher
             settingsView.onApplyClicked += OnSettingsApplyClicked;
             settingsView.onCancelClicked += OnSettingsCancelClicked;
             var settings = _contentManager.GetSettings();
-            settingsView.UpdateView(settings.Username, settings.UseMemoryMB, settings.CloseLauncher);
+            settingsView.UpdateView(settings);
         }
 
         private async void InitButtons()
@@ -127,6 +160,7 @@ namespace Launcher
             settings.Username = settingsView.Username;
             settings.UseMemoryMB = Math.Max(2048, settingsView.Memory);
             settings.CloseLauncher = settingsView.CloseOnLaunch;
+            settings.OpenConsole = settingsView.OpenConsole;
             await _contentManager.SaveSettings(settings);
             ChangeSettingsViewVisibility(open: false);
         }
@@ -135,11 +169,11 @@ namespace Launcher
         {
             _settingsViewIsOpen = open;
             settingsView.IsVisible = open;
-            if (!open)
-            {
-                var settings = _contentManager.GetSettings();
-                settingsView.UpdateView(settings.Username, settings.UseMemoryMB, settings.CloseLauncher);
-            }
+
+            if (open) return;
+
+            Settings settings = _contentManager.GetSettings();
+            settingsView.UpdateView(settings);
         }
 
         private void OnVKClicked(object? sender, RoutedEventArgs e)
