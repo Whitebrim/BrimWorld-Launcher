@@ -62,6 +62,7 @@ namespace Launcher
                         }
                         LaunchSettings.Instance.DataPath = o.Path;
                     }
+                    LaunchSettings.Instance.MultipleLaunch = o.MultipleLaunch;
                 });
         }
 
@@ -209,6 +210,7 @@ namespace Launcher
                 finally
                 {
                     Dispatcher.UIThread.Invoke(() => EnableProgressRings(serverId, false));
+                    if (LaunchSettings.Instance.MultipleLaunch) _launchIsProcessing = false;
                 }
             });
 
