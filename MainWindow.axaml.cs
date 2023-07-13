@@ -42,7 +42,7 @@ namespace Launcher
         private void Init(IEnumerable<string> args)
         {
             ParseLaunchArgs(args);
-            _contentManager = new ContentManager(new HttpClient());
+            _contentManager = new ContentManager(new HttpClient(), ChangeProgressBar);
             InitializeComponent();
 
             InitialResize();
@@ -199,20 +199,16 @@ namespace Launcher
             {
                 try
                 {
-                    await _contentManager.StartServer(serverId, () =>
-                    {
-                        Dispatcher.UIThread.Invoke(() => EnableProgressRings(serverId, false));
-                        _launchIsProcessing = false;
-                    });
+                    await _contentManager.StartServer(serverId, () => _launchIsProcessing = false);
                 }
                 catch (InvalidUsernameException)
                 {
                     Dispatcher.UIThread.Invoke(() => ChangeSettingsViewVisibility(open: true));
+                    _launchIsProcessing = false;
                 }
                 finally
                 {
                     Dispatcher.UIThread.Invoke(() => EnableProgressRings(serverId, false));
-                    _launchIsProcessing = false;
                 }
             });
 
@@ -222,6 +218,19 @@ namespace Launcher
         private void EnableProgressRings(int serverId, bool enable)
         {
             _progressRings[serverId].IsActive = enable;
+        }
+
+        public void ChangeProgressBar(float value)
+        {
+            if (!progressBar.IsVisible && value < 1)
+            {
+                progressBar.IsVisible = true;
+            }
+            if (progressBar.IsVisible && value == 1)
+            {
+                progressBar.IsVisible = false;
+            }
+            progressBar.Value = value;
         }
     }
 }

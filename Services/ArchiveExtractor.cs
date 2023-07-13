@@ -21,7 +21,7 @@ public class ArchiveExtractor
         _tarExtractor = new TarExtractor(fileManager);
     }
 
-    public async Task ExtractZip(string extractPath, string url)
+    public async Task ExtractZip(string extractPath, string url, Action<float>? progressBar)
     {
         var uri = new Uri(url);
         string ext = Path.GetExtension(uri.AbsolutePath);
@@ -39,6 +39,6 @@ public class ArchiveExtractor
                 default:
                     throw new Exception($"Unknown archive extension: {ext}");
             }
-        });
+        }, progressBar);
     }
 }

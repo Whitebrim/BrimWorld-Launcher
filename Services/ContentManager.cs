@@ -35,13 +35,15 @@ public class ContentManager
 
     private Manifest _manifest = null!;
     private Settings _settings = null!;
+    private Action<float> _progressBarAction;
 
-    public ContentManager(HttpClient httpClient)
+    public ContentManager(HttpClient httpClient, Action<float> progressBar)
     {
         _fileManager = new FileManager(GetLocalDataPath(RootPath));
         _contentDownloader = new ContentDownloader(httpClient, _fileManager);
         _archiveExtractor = new ArchiveExtractor(_contentDownloader, _fileManager);
         _httpClient = httpClient;
+        _progressBarAction = progressBar;
     }
 
     public async Task<bool> Initialize()
@@ -185,7 +187,7 @@ public class ContentManager
         return _manifest.Servers[serverId];
     }
 
-    public async Task StartServer(int serverId, Action onComplete)
+    public async Task StartServer(int serverId, Action onProcessKilled)
     {
         if (!Regex.IsMatch(_settings.Username, @"^[a-zA-Z0-9_]{2,16}$")) throw new InvalidUsernameException();
 
@@ -201,14 +203,14 @@ public class ContentManager
             localServerManifest = serverManifest;
         }
 
-        LaunchMinecraft(localServerManifest);
-
-        onComplete?.Invoke();
+        LaunchMinecraft(localServerManifest).Exited += (_, _) => onProcessKilled?.Invoke();
     }
 
-    private void LaunchMinecraft(ServerManifest serverManifest)
+    private Process LaunchMinecraft(ServerManifest serverManifest)
     {
         var process = new Process();
+        process.StartInfo.ErrorDialog = false;
+        process.EnableRaisingEvents = true;
         process.StartInfo.WorkingDirectory = GetLocalDataPath(RootPath, ContentDownloader.MinecraftPath, serverManifest.Alias);
         process.StartInfo.FileName = GetJavaPath(serverManifest.JavaDistribution);
         process.StartInfo.Arguments =
@@ -219,6 +221,7 @@ public class ContentManager
         {
             Dispatcher.UIThread.Invoke(CloseLauncher);
         }
+        return process;
     }
 
     private void CloseLauncher()
@@ -242,7 +245,7 @@ public class ContentManager
         if (!_settings.DownloadedContent.Contains(javaDist))
         {
             JavaManifest javaManifest = _manifest.JavaDistributions[javaDist];
-            await _contentDownloader.DownloadJava(javaDist, javaManifest, _archiveExtractor);
+            await _contentDownloader.DownloadJava(javaDist, javaManifest, _archiveExtractor, _progressBarAction);
             _settings.DownloadedContent.Add(javaDist);
             await SaveSettings(_settings);
         }
@@ -250,7 +253,7 @@ public class ContentManager
 
     private async Task InstallMinecraft(ServerManifest serverManifest)
     {
-        await _contentDownloader.DownloadMinecraft(serverManifest, _archiveExtractor);
+        await _contentDownloader.DownloadMinecraft(serverManifest, _archiveExtractor, _progressBarAction);
     }
 
     private bool IsLauncherUpdated()

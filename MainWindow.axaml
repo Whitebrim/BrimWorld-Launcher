@@ -80,6 +80,20 @@
               Canvas.Left="2060">
         <Image Source="/Assets/Close button.png"/>
       </Button>
+
+      <ProgressBar Name="progressBar"
+                   Minimum="0"
+                   Maximum="1"
+                   Value="0"
+                   Height="70"
+                   Width="2105"
+                   Canvas.Top="3730"
+                   Canvas.Left="46"
+                   Foreground="LimeGreen"
+                   CornerRadius="70 70 70 70"
+                   ShowProgressText="False"
+                   IsVisible="False"
+                   Background="Transparent"/>
     </Canvas>
   </Viewbox>
 

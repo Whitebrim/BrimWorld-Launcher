@@ -24,8 +24,8 @@
       <TextBox Name="username"
                Classes="Input"
                Width="920"
-               Height="93"
-               Canvas.Left="925"
+               Height="88"
+               Canvas.Left="924"
                Canvas.Top="763"
                FontFamily="{StaticResource Leto}"
                MaxLength="16"
@@ -34,7 +34,7 @@
                TextAlignment="Center"
                VerticalAlignment="Bottom"
                Watermark="Введи сюда свой никнейм"
-               FontSize="80"/>
+               FontSize="75"/>
 
       <TextBox Name="memory"
                Classes="Input"
@@ -54,7 +54,7 @@
                     Classes="Toggle CloseLauncher"
                     Width="120"
                     Height="120"
-                    Canvas.Left="1713"
+                    Canvas.Left="1712"
                     Canvas.Top="1561"
                     IsChecked="false">
         <Panel>
@@ -69,7 +69,7 @@
                     Classes="Toggle OpenConsole"
                     Width="120"
                     Height="120"
-                    Canvas.Left="1592"
+                    Canvas.Left="1591"
                     Canvas.Top="1718"
                     IsChecked="true">
         <Panel>

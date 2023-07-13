@@ -43,13 +43,13 @@ public class ContentDownloader
         }
     }
 
-    public async Task<Manifest?> DownloadManifest()
+    public async Task<Manifest?> DownloadManifest(Action<float>? onProgress = null)
     {
         Manifest? result = default;
         await DownloadFileFromApi(ManifestPath, async contentStream =>
         {
             result = await JsonSerializer.DeserializeAsync<Manifest>(contentStream, ManifestContext.Default.Manifest);
-        });
+        }, onProgress);
 
         return result;
     }
@@ -88,31 +88,31 @@ public class ContentDownloader
         }
     }
 
-    public async Task DownloadJava(string javaDist, JavaManifest javaManifest, ArchiveExtractor archiveExtractor)
+    public async Task DownloadJava(string javaDist, JavaManifest javaManifest, ArchiveExtractor archiveExtractor, Action<float>? onProgress = null)
     {
         string downloadUrl = javaManifest.DownloadUrls[PlatformDetector.GetSystemInfo()];
-        await archiveExtractor.ExtractZip(Path.Join(JavaPath, javaDist), downloadUrl);
+        await archiveExtractor.ExtractZip(Path.Join(JavaPath, javaDist), downloadUrl, onProgress);
     }
 
-    public async Task DownloadMinecraft(ServerManifest serverManifest, ArchiveExtractor archiveExtractor)
+    public async Task DownloadMinecraft(ServerManifest serverManifest, ArchiveExtractor archiveExtractor, Action<float>? onProgress = null)
     {
         string downloadUrl = serverManifest.ClientUrl;
-        await archiveExtractor.ExtractZip(Path.Join(MinecraftPath, serverManifest.Alias), downloadUrl);
+        await archiveExtractor.ExtractZip(Path.Join(MinecraftPath, serverManifest.Alias), downloadUrl, onProgress);
     }
 
-    private async Task DownloadFileFromApi(string relativePath, Func<Stream, Task> action)
+    private async Task DownloadFileFromApi(string relativePath, Func<Stream, Task> action, Action<float>? onProgress = null)
     {
-        await DownloadFile(Url.Combine(ApiUrl, relativePath), action);
+        await DownloadFile(Url.Combine(ApiUrl, relativePath), action, onProgress);
     }
 
 
-    public async Task DownloadFile(string url, Func<Stream, Task> action)
+    public async Task DownloadFile(string url, Func<Stream, Task> action, Action<float>? onProgress = null)
     {
         Debug.WriteLine("Downloading from " + url);
 
         using HttpResponseMessage response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
         response.EnsureSuccessStatusCode();
 
-        await action(await response.Content.ReadAsStreamAsync());
+        await action(await response.Content.ReadAsStreamAsync(onProgress));
     }
 }
