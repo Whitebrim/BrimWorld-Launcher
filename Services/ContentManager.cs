@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using Launcher.Extensions;
 using Launcher.Models;
 using System;
@@ -216,11 +217,16 @@ public class ContentManager
                 string.Format(serverManifest.MinecraftArgs, _settings.Username));
         if (process.Start() && _settings.CloseLauncher) // Close Launcher
         {
-            Application? app = Application.Current;
-            if (app?.ApplicationLifetime is ClassicDesktopStyleApplicationLifetime lifetime)
-            {
-                lifetime.Shutdown();
-            }
+            Dispatcher.UIThread.Invoke(CloseLauncher);
+        }
+    }
+
+    private void CloseLauncher()
+    {
+        Application? app = Application.Current;
+        if (app?.ApplicationLifetime is ClassicDesktopStyleApplicationLifetime lifetime)
+        {
+            lifetime.Shutdown();
         }
     }
 

@@ -11,10 +11,11 @@ using System.IO;
 using System.Net.Http;
 using AvaloniaProgressRing;
 using Debug = System.Diagnostics.Debug;
-using System.Reflection;
 using Launcher.Extensions;
 using CommandLine;
 using Launcher.Models;
+using System.Threading.Tasks;
+using Avalonia.Threading;
 
 namespace Launcher
 {
@@ -191,25 +192,36 @@ namespace Launcher
         private async void OnServerClicked(int serverId)
         {
             if (_launchIsProcessing) return;
+            EnableProgressRings(serverId, true);
             _launchIsProcessing = true;
-            _progressRings[serverId].IsActive = true;
-            try
+
+            Task task = new Task(async () =>
             {
-                await _contentManager.StartServer(serverId, () =>
+                try
                 {
-                    _progressRings[serverId].IsActive = false;
+                    await _contentManager.StartServer(serverId, () =>
+                    {
+                        Dispatcher.UIThread.Invoke(() => EnableProgressRings(serverId, false));
+                        _launchIsProcessing = false;
+                    });
+                }
+                catch (InvalidUsernameException)
+                {
+                    Dispatcher.UIThread.Invoke(() => ChangeSettingsViewVisibility(open: true));
+                }
+                finally
+                {
+                    Dispatcher.UIThread.Invoke(() => EnableProgressRings(serverId, false));
                     _launchIsProcessing = false;
-                });
-            }
-            catch (InvalidUsernameException)
-            {
-                ChangeSettingsViewVisibility(open: true);
-            }
-            finally
-            {
-                _progressRings[serverId].IsActive = false;
-                _launchIsProcessing = false;
-            }
+                }
+            });
+
+            task.Start();
+        }
+
+        private void EnableProgressRings(int serverId, bool enable)
+        {
+            _progressRings[serverId].IsActive = enable;
         }
     }
 }
