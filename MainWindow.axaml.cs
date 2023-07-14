@@ -55,7 +55,7 @@ namespace Launcher
                 {
                     if (!string.IsNullOrEmpty(o.Path))
                     {
-                        DirectoryInfo dir = System.IO.Directory.CreateDirectory(o.Path);
+                        DirectoryInfo dir = Directory.CreateDirectory(o.Path);
                         if (!dir.Exists)
                         {
                             throw new LaunchArgumentException($"Invalid launch argument: Path {o.Path} cant be created.");
