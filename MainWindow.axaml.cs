@@ -16,6 +16,7 @@ using CommandLine;
 using Launcher.Models;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+#pragma warning disable CS8618
 
 namespace Launcher
 {
