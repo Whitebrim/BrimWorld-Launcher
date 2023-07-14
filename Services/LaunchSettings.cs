@@ -4,10 +4,8 @@ namespace Launcher.Services;
 
 public class LaunchSettings
 {
-    private static readonly Lazy<LaunchSettings> LazyLoader = new Lazy<LaunchSettings>(() =>
-    {
-        return new LaunchSettings(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), false);
-    });
+    private static readonly Lazy<LaunchSettings> LazyLoader = new(
+        () => new LaunchSettings(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), false));
     public static LaunchSettings Instance => LazyLoader.Value;
 
     public LaunchSettings(string dataPath, bool multipleLaunch)
@@ -17,5 +15,5 @@ public class LaunchSettings
     }
 
     public string DataPath { get; set; }
-    public bool MultipleLaunch {get; set; }
+    public bool MultipleLaunch { get; set; }
 }

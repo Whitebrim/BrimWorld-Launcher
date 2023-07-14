@@ -62,7 +62,11 @@ namespace Launcher
                         }
                         LaunchSettings.Instance.DataPath = o.Path;
                     }
-                    LaunchSettings.Instance.MultipleLaunch = o.MultipleLaunch;
+                    if (o.MultipleLaunch.HasValue)
+                    {
+                        LaunchSettings.Instance.MultipleLaunch = o.MultipleLaunch.Value;
+                    }
+
                 });
         }
 
@@ -84,7 +88,7 @@ namespace Launcher
         {
             settingsView.onApplyClicked += OnSettingsApplyClicked;
             settingsView.onCancelClicked += OnSettingsCancelClicked;
-            var settings = _contentManager.GetSettings();
+            Settings settings = _contentManager.GetSettings();
             settingsView.UpdateView(settings);
         }
 
@@ -158,7 +162,7 @@ namespace Launcher
 
         private async void OnSettingsApplyClicked()
         {
-            var settings = _contentManager.GetSettings();
+            Settings settings = _contentManager.GetSettings();
             settings.Username = settingsView.Username;
             settings.UseMemoryMB = Math.Max(2048, settingsView.Memory);
             settings.CloseLauncher = settingsView.CloseOnLaunch;
@@ -190,13 +194,13 @@ namespace Launcher
                 .Start();
         }
 
-        private async void OnServerClicked(int serverId)
+        private void OnServerClicked(int serverId)
         {
             if (_launchIsProcessing) return;
             EnableProgressRings(serverId, true);
             _launchIsProcessing = true;
 
-            Task task = new Task(async () =>
+            var task = new Task(async () =>
             {
                 try
                 {
@@ -222,13 +226,13 @@ namespace Launcher
             _progressRings[serverId].IsActive = enable;
         }
 
-        public void ChangeProgressBar(float value)
+        private void ChangeProgressBar(float value)
         {
             if (!progressBar.IsVisible && value < 1)
             {
                 progressBar.IsVisible = true;
             }
-            if (progressBar.IsVisible && value == 1)
+            if (progressBar.IsVisible && Math.Abs(value - 1) < 0.0001f)
             {
                 progressBar.IsVisible = false;
             }
