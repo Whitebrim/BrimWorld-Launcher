@@ -9,16 +9,4 @@ public class CommandLineOptions
 
     [Option('m', "multiple-launch", Required = false, Default = (bool)false, HelpText = "If true, launcher allows to start multiple instances of minecraft")]
     public bool MultipleLaunch { get; set; }
-
-    public CommandLineOptions()
-    {
-        Path = "";
-        MultipleLaunch = false;
-    }
-
-    public CommandLineOptions(string path, bool multipleLaunch)
-    {
-        Path = path;
-        MultipleLaunch = multipleLaunch;
-    }
 }

@@ -51,7 +51,7 @@ namespace Launcher
         private void ParseLaunchArgs(IEnumerable<string> args)
         {
             Parser.Default.ParseArguments<CommandLineOptions>(args)
-                .WithParsed<CommandLineOptions>(o =>
+                .WithParsed(o =>
                 {
                     if (!string.IsNullOrEmpty(o.Path))
                     {
