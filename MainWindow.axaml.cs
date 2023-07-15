@@ -16,6 +16,7 @@ using CommandLine;
 using Launcher.Models;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using System.Diagnostics.CodeAnalysis;
 #pragma warning disable CS8618
 
 namespace Launcher
@@ -49,6 +50,7 @@ namespace Launcher
             InitialResize();
         }
 
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(CommandLineOptions))]
         private void ParseLaunchArgs(IEnumerable<string> args)
         {
             Parser.Default.ParseArguments<CommandLineOptions>(args)
