@@ -13,7 +13,7 @@ public static class PlatformDetector
         return systemInfo;
     }
 
-    private static string GetPlatform()
+    public static string GetPlatform()
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return "windows";
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) return "linux";

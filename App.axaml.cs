@@ -1,9 +1,6 @@
-using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using CommandLine;
-using Launcher.Models;
 using Debug = System.Diagnostics.Debug;
 
 namespace Launcher

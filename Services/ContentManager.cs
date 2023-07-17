@@ -20,8 +20,7 @@ namespace Launcher.Services;
 
 public class ContentManager
 {
-    //private static readonly Lazy<ContentManager> LazyLoader = new Lazy<ContentManager>(() => new ContentManager());
-    //public static ContentManager Instance => LazyLoader.Value;
+    public static string CrashReportPath = "";
 
     private const string LauncherDataPath = "Launcher";
     private const string RootPath = "BrimWorld";
@@ -39,6 +38,7 @@ public class ContentManager
 
     public ContentManager(HttpClient httpClient, Action<float> progressBar)
     {
+        CrashReportPath = GetLocalDataPath(RootPath, "CRASH-REPORT.txt");
         _fileManager = new FileManager(GetLocalDataPath(RootPath));
         _contentDownloader = new ContentDownloader(httpClient, _fileManager);
         _archiveExtractor = new ArchiveExtractor(_contentDownloader, _fileManager);
