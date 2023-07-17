@@ -256,6 +256,24 @@ public class ContentManager
         await _contentDownloader.DownloadMinecraft(serverManifest, _archiveExtractor, _progressBarAction);
     }
 
+    public void FixClient(int serverId)
+    {
+        if (serverId == 0)
+        {
+            if (GetServerManifest(serverId) is not { } serverManifest) return;
+            var automodpackPath = GetLocalDataPath(RootPath, ContentDownloader.MinecraftPath, serverManifest.Alias, "automodpack");
+            var modsPath = GetLocalDataPath(RootPath, ContentDownloader.MinecraftPath, serverManifest.Alias, "mods");
+
+            if (Directory.Exists(automodpackPath))
+                Directory.Delete(automodpackPath, true);
+
+            var reg = new Regex(@"^automodpack.*\.jar$");
+            Directory.GetFiles(modsPath)
+                     .Where(file => !reg.Match(Path.GetFileName(file)).Success).AsParallel()
+                     .ForAll(File.Delete);
+        }
+    }
+
     private bool IsLauncherUpdated()
     {
         var version = GetLauncherVersion();

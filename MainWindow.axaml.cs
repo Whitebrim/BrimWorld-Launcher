@@ -25,8 +25,10 @@ namespace Launcher
     {
         private const float WindowScale = 0.8f;
         private ContentManager _contentManager;
-        private readonly List<ProgressRing> _progressRings = new List<ProgressRing>();
-        private bool _launchIsProcessing = false;
+        private ProgressRing[] _progressRings = new ProgressRing[2];
+        private Button[] _serverButtons = new Button[2];
+        private MenuItem[] _contextMenuFixButtons = new MenuItem[2];
+        private bool[] _launchIsProcessing = new bool[2];
         private bool _settingsViewIsOpen = false;
 
         public MainWindow()
@@ -97,19 +99,26 @@ namespace Launcher
 
         private async void InitButtons()
         {
-            _progressRings.Add(firstServerLoadingBar);
-            _progressRings.Add(secondServerLoadingBar);
-            firstServerButton.Click += (s, e) => OnServerClicked(0);
-            secondServerButton.Click += (s, e) => OnServerClicked(1);
-            firstServerButton.IsEnabled = _contentManager.IsServerEnabled(0);
-            secondServerButton.IsEnabled = _contentManager.IsServerEnabled(1);
+            _serverButtons[0] = firstServerButton;
+            _serverButtons[1] = secondServerButton;
+            _contextMenuFixButtons[0] = firstServerButtonFix;
+            _contextMenuFixButtons[1] = secondServerButtonFix;
+            _progressRings[0] = firstServerLoadingBar;
+            _progressRings[1] = secondServerLoadingBar;
+
+            _serverButtons[0].Click += (s, e) => OnServerClicked(0);
+            _serverButtons[1].Click += (s, e) => OnServerClicked(1);
+            _contextMenuFixButtons[0].Click += (s, e) => OnFixServerClicked(0);
+            _contextMenuFixButtons[1].Click += (s, e) => OnFixServerClicked(1);
+            _serverButtons[0].IsEnabled = _contentManager.IsServerEnabled(0);
+            _serverButtons[1].IsEnabled = _contentManager.IsServerEnabled(1);
             settingsButton.IsEnabled = true;
             foreach (ProgressRing ring in _progressRings)
             {
                 ring.IsActive = false;
             }
-            (firstServerButton.Content as Image)!.Source = await _contentManager.GetBanner(0);
-            (secondServerButton.Content as Image)!.Source = await _contentManager.GetBanner(1);
+            (_serverButtons[0].Content as Image)!.Source = await _contentManager.GetBanner(0);
+            (_serverButtons[1].Content as Image)!.Source = await _contentManager.GetBanner(1);
         }
 
         private void InitialResize()
@@ -197,31 +206,63 @@ namespace Launcher
                 .Start();
         }
 
+        private void OnFixServerClicked(int serverId)
+        {
+            if (_launchIsProcessing[serverId]) return;
+            EnableProgressRings(serverId, true);
+            ChangeLaunchProcessing(serverId, true);
+
+            var task = new Task(async () =>
+            {
+                _contentManager.FixClient(serverId);
+                await Task.Delay(300); // To show user that task was actually processing
+                InvokeOnUIThread(() =>
+                {
+                    EnableProgressRings(serverId, false);
+                    ChangeLaunchProcessing(serverId, false);
+                });
+            });
+
+            task.Start();
+        }
+
         private void OnServerClicked(int serverId)
         {
-            if (_launchIsProcessing) return;
+            if (_launchIsProcessing[serverId]) return;
             EnableProgressRings(serverId, true);
-            _launchIsProcessing = true;
+            ChangeLaunchProcessing(serverId, true);
 
             var task = new Task(async () =>
             {
                 try
                 {
-                    await _contentManager.StartServer(serverId, () => _launchIsProcessing = false);
+                    await _contentManager.StartServer(serverId, () => InvokeOnUIThread(() => ChangeLaunchProcessing(serverId, false)));
                 }
                 catch (InvalidUsernameException)
                 {
-                    Dispatcher.UIThread.Invoke(() => ChangeSettingsViewVisibility(open: true));
-                    _launchIsProcessing = false;
+                    InvokeOnUIThread(() =>
+                    {
+                        ChangeSettingsViewVisibility(open: true);
+                        ChangeLaunchProcessing(serverId, false);
+                    });
                 }
                 finally
                 {
-                    Dispatcher.UIThread.Invoke(() => EnableProgressRings(serverId, false));
-                    if (LaunchSettings.Instance.MultipleLaunch) _launchIsProcessing = false;
+                    InvokeOnUIThread(() =>
+                    {
+                        EnableProgressRings(serverId, false);
+                        if (LaunchSettings.Instance.MultipleLaunch) ChangeLaunchProcessing(serverId, false);
+                    });
                 }
             });
 
             task.Start();
+        }
+
+        private void ChangeLaunchProcessing(int serverId, bool processing)
+        {
+            _launchIsProcessing[serverId] = processing;
+            _contextMenuFixButtons[serverId].IsEnabled = !processing;
         }
 
         private void EnableProgressRings(int serverId, bool enable)
@@ -241,5 +282,7 @@ namespace Launcher
             }
             progressBar.Value = value;
         }
+
+        private void InvokeOnUIThread(Action action) => Dispatcher.UIThread.Invoke(action);
     }
 }

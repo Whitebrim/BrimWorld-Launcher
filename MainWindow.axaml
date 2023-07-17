@@ -1,4 +1,3 @@
-
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:v="using:Launcher"
@@ -36,11 +35,21 @@
 
       <Button Classes="ServerButton" Name="firstServerButton"
               Canvas.Top="1870" IsEnabled="false">
+        <Button.ContextMenu>
+          <ContextMenu>
+            <MenuItem Header="Починить" Name="firstServerButtonFix"/>
+          </ContextMenu>
+        </Button.ContextMenu>
         <Image Source="/Assets/Placeholder button.png"/>
       </Button>
 
       <Button Classes="ServerButton" Name="secondServerButton"
               Canvas.Top="2780" IsEnabled="false">
+        <Button.ContextMenu>
+          <ContextMenu>
+            <MenuItem Header="Починить" Name="secondServerButtonFix"/>
+          </ContextMenu>
+        </Button.ContextMenu>
         <Image Source="/Assets/Placeholder button.png"/>
       </Button>
 
@@ -62,7 +71,7 @@
                       Width="2224"
                       Height="3840"
                       IsVisible="False"/>
-      
+
       <Button Classes="TitlebarButton" Name="settingsButton"
               Click="OnSettingsClicked" IsEnabled="False"
               Canvas.Left="1776">
