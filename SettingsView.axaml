@@ -91,6 +91,14 @@
               Canvas.Left="470">
         <Image Source="{StaticResource Cancel button}"/>
       </Button>
+
+      <TextBlock Name="version"
+                 Canvas.Left="1950"
+                 Canvas.Top="3730"
+                 FontFamily="{StaticResource Leto}"
+                 FontSize="50"
+                 Foreground="#393b25"
+                 TextAlignment="Right"/>
     </Canvas>
   </Viewbox>
 
@@ -175,7 +183,7 @@
       <Setter Property="Height" Value="223" />
     </Style>
 
-    
+
     <Style Selector="TextBox.Input">
       <Setter Property="Background" Value="Transparent"/>
     </Style>

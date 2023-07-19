@@ -4,6 +4,7 @@ using Launcher.Services;
 using System;
 using System.Diagnostics;
 using Launcher.Models;
+using System.Reflection;
 
 namespace Launcher;
 
@@ -29,6 +30,8 @@ public partial class SettingsView : UserControl
     public SettingsView()
     {
         InitializeComponent();
+        var ver = Assembly.GetExecutingAssembly().GetName().Version!;
+        version.Text = "v" + ver.Major + "." + ver.Minor + "." + ver.Build;
     }
 
     public void UpdateView(Settings settings)
