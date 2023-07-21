@@ -27,12 +27,13 @@ namespace Launcher
                         string path = ContentManager.CrashReportPath;
                         if (string.IsNullOrEmpty(path))
                             path = Path.Join(Path.GetTempPath(), Path.GetTempFileName());
-                        File.WriteAllText(path, $"\n╔════════════════════════════════════════════" +
-                                                $"\n║ ▶️ Этот краш-репорт был сохранен по пути:" +
-                                                $"\n║ ▶️ {path}" +
-                                                $"\n║ ▶️ Покажи его Бриму чтобы получить помощь." +
-                                                $"\n╚════════════════════════════════════════════" +
-                                                $"\n\n" +
+                        var n = Environment.NewLine;
+                        File.WriteAllText(path, $"{n}╔════════════════════════════════════════════" +
+                                                $"{n}║ ▶️ Этот краш-репорт был сохранен по пути:" +
+                                                $"{n}║ ▶️ {path}" +
+                                                $"{n}║ ▶️ Покажи его Бриму чтобы получить помощь." +
+                                                $"{n}╚════════════════════════════════════════════" +
+                                                $"{n}{n}" +
                                                 e);
                         ShowErrorWindows(path);
                         break;
