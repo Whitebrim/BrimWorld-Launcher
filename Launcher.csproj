@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Version>1.1.1</Version>
     <RuntimeIdentifiers>win-x64;osx-arm64</RuntimeIdentifiers>
@@ -18,7 +18,7 @@
 
 	<ItemGroup>
     <PackageReference Include="Avalonia" Version="11.0.1" />
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.3" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.1" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.1" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
