@@ -24,7 +24,7 @@
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.4" />
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
-    <PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.10.1" />
+    <PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.10.8" />
     <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
     <PackageReference Include="System.Text.Json" Version="8.0.4" />
 
