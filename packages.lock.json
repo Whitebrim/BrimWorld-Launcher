@@ -4,12 +4,12 @@
     "net7.0": {
       "Avalonia": {
         "type": "Direct",
-        "requested": "[11.1.3, )",
-        "resolved": "11.1.3",
-        "contentHash": "kpVAnKTbg/ZVnWyYLGPYXR0Ce4uiHLT1y6BcgJYpdFfn3b0TmvbxFZV37lpc1wEjUyaU28V+DoNnRbYSLsv0nw==",
+        "requested": "[11.2.2, )",
+        "resolved": "11.2.2",
+        "contentHash": "gycD/+pjaNh6288vEGDOcgks3Gz/dhZaZu6VSao6wMBXAQpBMEFlU4gW1dXXH2N0zdOlv3Jo1PgmH2megCe2yw==",
         "dependencies": {
           "Avalonia.BuildServices": "0.0.29",
-          "Avalonia.Remote.Protocol": "11.1.3",
+          "Avalonia.Remote.Protocol": "11.2.2",
           "MicroCom.Runtime": "0.11.0"
         }
       },
@@ -49,11 +49,11 @@
       },
       "Avalonia.Themes.Fluent": {
         "type": "Direct",
-        "requested": "[11.1.3, )",
-        "resolved": "11.1.3",
-        "contentHash": "/2O9HXnnqRVGQ6VUjLLOkCNQx1/gXu69yyzUmDgS13Q0LdbGaYUYzSnPFnIBtOABuVCmdwbu+W+YI6jSwnT0uw==",
+        "requested": "[11.2.2, )",
+        "resolved": "11.2.2",
+        "contentHash": "75z5fu4R3myG4TiyPKXHpjA3Jimq6InBB+inLugNHtONuDT9pQdt/CMPhnMcRaueBLjvaJTFs4KS5U8+sGTu0A==",
         "dependencies": {
-          "Avalonia": "11.1.3"
+          "Avalonia": "11.2.2"
         }
       },
       "CommandLineParser": {
@@ -139,8 +139,8 @@
       },
       "Avalonia.Remote.Protocol": {
         "type": "Transitive",
-        "resolved": "11.1.3",
-        "contentHash": "ByXwboJC1jg13Qdxfs3/aX/yY4wi9n1XKT+a6+ckLnpSeesjQ0J6N1+wix7ISuGwFo0cyT0nXpvI4s2Zo+rkSA=="
+        "resolved": "11.2.2",
+        "contentHash": "76nQ2/TkJAmthHcCPoVznnCfsqhy+pDPFBhySoRv3ZIsj5q9jIgR0bi7rznIcFIKnfoXMEpB1uxMHbfeQ99OgQ=="
       },
       "Avalonia.Skia": {
         "type": "Transitive",
