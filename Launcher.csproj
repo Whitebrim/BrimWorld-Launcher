@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Version>1.1.2</Version>
     <RuntimeIdentifiers>win-x64;osx-arm64</RuntimeIdentifiers>
@@ -26,7 +26,7 @@
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.10.8" />
     <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
-    <PackageReference Include="System.Text.Json" Version="9.0.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.3" />
 
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
